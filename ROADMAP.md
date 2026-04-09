@@ -144,7 +144,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 5: Production Hardening — IN PROGRESS
+## Phase 5: Production Hardening — COMPLETE
 
 **Goal:** Make the factory reliable enough for repeated use with confidence.
 
@@ -176,11 +176,23 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - RUNBOOK.md expanded: systemd commands, restore-from-GitHub procedure, custom port, troubleshooting
 - Hardening report: `reports/phase5b-deployment-restore-report.md`
 
+**Phase 5C — Pipeline repeatability + CEO trigger (2026-04-09):**
+- Restore proof re-run: latest pilot (8d317f9) cloned from GitHub → 6/6 tests pass on port 3201 → HTML + JSON serve correctly → 127.0.0.1 only → cleaned up
+- CEO trigger artifact: "How to start a new project" quickstart added to DELIVERY_PIPELINE.md (5 steps, ~5 min CEO involvement)
+- Second project delivered end-to-end: s4a-service-snapshot-cli
+  - Scaffolded from `templates/project-repo/` (TEMPLATE_USAGE.md correctly excluded)
+  - CLI built: `node snapshot.js` (human-readable) / `node snapshot.js --json` (machine-readable)
+  - Checks: Paperclip, Ollama, OpenClaw reachability, Docker availability, SSOT phase summary
+  - Zero external dependencies
+  - 5/5 tests pass
+  - Pushed to github.com/yosiwizman/s4a-service-snapshot-cli
+- Closeout report: `reports/phase5c-closeout-report.md`
+
 **Exit criteria:**
-- [ ] Can start a new project and have reasonable confidence it will complete
+- [x] Can start a new project and have reasonable confidence it will complete (second project s4a-service-snapshot-cli delivered end-to-end — template → intake → scaffold → build → test → push)
 - [x] Failure modes documented with recovery steps (RUNBOOK.md in pilot repo)
-- [x] Backup/restore tested at least once (GitHub clone → test → serve → verified)
-- [ ] CEO can trigger a project build with minimal involvement
+- [x] Backup/restore tested at least once (GitHub clone → test → serve on port 3201 → verified)
+- [x] CEO can trigger a project build with minimal involvement (CEO quickstart in DELIVERY_PIPELINE.md — 5 steps, ~5 min)
 
 ---
 

@@ -167,6 +167,42 @@ Review finds issues → return to builder (same level, up to 2 fix attempts)
 
 ---
 
+## How to start a new project (CEO quickstart)
+
+This is the minimum path for the CEO to trigger a new project build.
+
+**Step 1 — Describe the idea** (30 seconds)
+Tell Claude Code or Paperclip what you want built. One paragraph is enough.
+
+**Step 2 — Review the intake** (2 minutes)
+The agent fills out `PROJECT_INTAKE_TEMPLATE.md` from your description. You review it:
+- Does the project name make sense?
+- Does the business goal match your intent?
+- Are the success criteria right?
+- Is the stack choice reasonable?
+
+Say "approved" or request changes.
+
+**Step 3 — Scaffold happens automatically**
+The agent creates the project repo in `~/projects/<name>` from `templates/project-repo/`, fills placeholders, and commits the scaffold.
+
+**Step 4 — Build happens autonomously**
+The builder agent (OpenCode by default, Claude Code for complex tasks) works through the build path defined in the intake. One task, one commit.
+
+**Step 5 — Review and approve** (2 minutes)
+After build + review + QA, the agent presents a summary:
+- What was built
+- Test results
+- Any risks
+
+Say "deploy" or "fix [specific issue]."
+
+**Total CEO involvement: ~5 minutes across 3 touchpoints.**
+
+Everything else — scaffold, build, test, review — is autonomous within the rules defined in this pipeline.
+
+---
+
 ## Lessons learned (Phase 4 pilot — 2026-04-09)
 
 Findings from running s4a-factory-dashboard through the pipeline end-to-end. See `reports/phase4-pilot-report.md` for the full report.
