@@ -105,7 +105,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 4: Pilot Project Flow
+## Phase 4: Pilot Project Flow — IN PROGRESS
 
 **Goal:** Run one real project through the full delivery pipeline end to end. Validate the factory works.
 
@@ -116,6 +116,13 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Token cost measured
 - Time-to-delivery measured
 - Lessons learned documented
+
+**Pilot selected (Phase 4A — 2026-04-09):**
+- **Project:** s4a-factory-dashboard — local status dashboard for the CEO
+- **Selection report:** `reports/phase4-pilot-selection.md`
+- **Intake form:** `reports/phase4-pilot-intake.md`
+- **Repo (planned):** `~/projects/s4a-factory-dashboard`
+- **Status:** Awaiting CEO scope approval before build begins
 
 **Exit criteria:**
 - [ ] Pilot project delivered and working
