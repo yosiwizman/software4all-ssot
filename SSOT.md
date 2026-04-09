@@ -63,7 +63,7 @@ When specific events happen, update the corresponding canonical file immediately
 | Software installed or removed | CURRENT_STATE.md (version + status tag) and INSTALL_BASELINE.md (move item to correct section) |
 | Major architecture or policy decision | DECISIONS_LOG.md (append new DEC-NNN entry) |
 | Roadmap phase completed or replanned | ROADMAP.md (check off exit criteria, update phase status) |
-| New project onboarded | Copy PROJECT_INTAKE_TEMPLATE.md, fill it out, store in project's own repo |
+| New project onboarded | 1) Copy PROJECT_INTAKE_TEMPLATE.md, fill it out, get CEO approval. 2) Scaffold repo from `templates/project-repo/` into `~/projects/<name>`. See `templates/project-repo/TEMPLATE_USAGE.md` for steps. |
 | Security posture changed | SECURITY_BASELINE.md and CURRENT_STATE.md (risks table) |
 | Agent role or authority changed | AGENT_ROLE_MATRIX.md |
 | Tool approved or removed from stack | STACK_STANDARD.md and DECISIONS_LOG.md |

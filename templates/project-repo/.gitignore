@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+client_secret*.json
+
+# Build output
+dist/
+build/
+out/
+.next/
+*.egg-info/
+
+# IDE and editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test and coverage
+coverage/
+.nyc_output/
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/

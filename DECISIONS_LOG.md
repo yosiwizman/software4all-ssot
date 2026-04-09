@@ -134,3 +134,9 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 4. **Paperclip invocation:** No `paperclip` CLI binary exists in PATH. Control plane runs via `pnpm dev` from `~/paperclip`. CLI available as `pnpm paperclipai` within the repo. Ports 3100 and 13100 (both localhost-only).
 **Rationale:** Phase 3 requires documenting reality before prescribing changes. This audit corrects the prior assumption that AKIOR repos were duplicates, clarifies Paperclip naming ambiguity, and establishes directory conventions to prevent workspace sprawl.
 **Authorship:** CTO-executed
+
+### DEC-020: Standard project repo template established
+**Date:** 2026-04-09
+**Decision:** Create a canonical project repo scaffold at `templates/project-repo/` in the SSOT repo. The template is stack-agnostic and governance-first — it provides README.md (with placeholders), CLAUDE.md (agent instructions), .gitignore (multi-language), docs/ directory, and a TEMPLATE_USAGE.md explaining the workflow. Builder agents add language/framework-specific files during the build phase. New projects must use this template after intake approval.
+**Rationale:** Phase 3 exit criterion requires a usable project template. The template enforces consistent repo structure across projects without over-prescribing stack choices. Keeping it in the SSOT repo (not inside Paperclip) ensures it persists regardless of control-plane version changes. The intake form (PROJECT_INTAKE_TEMPLATE.md) and repo scaffold (templates/project-repo/) are complementary — intake defines what to build, scaffold defines where to build it.
+**Authorship:** CTO-executed

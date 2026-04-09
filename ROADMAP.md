@@ -70,19 +70,19 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 3: Standardization — IN PROGRESS
+## Phase 3: Standardization — COMPLETE
 
 **Goal:** Ensure consistent project structure, repo conventions, and workspace organization.
 
 **Outputs:**
-- Standard project repo template created
-- Workspace directory structure documented
-- Duplicate repos identified and consolidated (e.g., akior)
-- pnpm/bun path standardization resolved
-- Git branching and commit conventions documented
-- CI/lint baseline defined (even if not yet automated)
+- Standard project repo template created (`templates/project-repo/`)
+- Workspace directory structure documented (CURRENT_STATE.md, STACK_STANDARD.md)
+- AKIOR repos verified as distinct (governance vs application) — not duplicates
+- pnpm/bun path standardization resolved and documented
+- Workspace directory conventions established (STACK_STANDARD.md)
+- Paperclip runtime/CLI naming clarified
 
-**Progress (Phase 3A — 2026-04-09):**
+**Phase 3A (2026-04-09):**
 - Workspace audit completed — all repos catalogued in CURRENT_STATE.md
 - AKIOR "duplicate" repos investigated — found to be two distinct repos (governance vs application), not duplicates. Risk entry corrected.
 - pnpm install path documented (npm global, not corepack). Bun confirmed runtime-only (no global installs).
@@ -90,8 +90,15 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Undocumented port 13100 (Paperclip secondary listener) added to port ownership table.
 - Workspace directory conventions added to STACK_STANDARD.md.
 
+**Phase 3B (2026-04-09):**
+- Standard project repo template created at `templates/project-repo/`
+- Template includes: README.md, CLAUDE.md, .gitignore, docs/, TEMPLATE_USAGE.md
+- Stack-agnostic scaffold — builder agents add language/framework files during build
+- Usage guide documents the full workflow: intake → scaffold → build
+- SSOT.md and README.md updated to cross-reference the template
+
 **Exit criteria:**
-- [ ] Project template exists and is usable
+- [x] Project template exists and is usable (`templates/project-repo/` with usage guide)
 - [x] No duplicate repos for same project (verified — ~/akior and ~/projects/akior are distinct repos with different remotes and purposes)
 - [x] Package manager paths are clean and unambiguous (pnpm via npm global, bun runtime-only, no conflicts)
 - [x] Conventions documented in this repo (workspace conventions in STACK_STANDARD.md, workspace structure in CURRENT_STATE.md)

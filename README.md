@@ -10,7 +10,7 @@ This repo contains company standards, architecture decisions, machine state, sec
 - **Before installing software**, check INSTALL_BASELINE.md for approved tools.
 - **Before making architecture decisions**, check DECISIONS_LOG.md for prior decisions.
 - **When machine state changes**, update CURRENT_STATE.md.
-- **When starting a new project**, copy PROJECT_INTAKE_TEMPLATE.md and fill it out.
+- **When starting a new project**, copy PROJECT_INTAKE_TEMPLATE.md and fill it out, then scaffold the repo from `templates/project-repo/`.
 
 ## Document map
 
@@ -31,7 +31,7 @@ This repo contains company standards, architecture decisions, machine state, sec
 
 | Directory | Purpose |
 |-----------|---------|
-| `templates/` | Reusable templates (intake, ADR, etc.) |
+| `templates/` | Reusable templates — includes `project-repo/` scaffold for new projects |
 | `decisions/` | Individual ADR-style decision records |
 | `reports/` | Audit and environment reports |
 | `diagrams/` | Architecture visuals and text diagrams |
