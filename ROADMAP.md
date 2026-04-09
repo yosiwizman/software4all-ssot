@@ -167,8 +167,17 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Total test coverage: 8/8 (6 node + 2 Playwright)
 - Hardening report: `reports/phase5a-hardening-report.md`
 
+**Phase 5B — Hardening pack 2 (2026-04-09):**
+- PORT configurable via env var (default 3200, localhost-only)
+- ops/dashboard.sh: start/stop/status/restart with PID tracking
+- ops/s4a-dashboard.service: systemd user service — installed, enabled, verified
+- Auto-starts on user login via `loginctl enable-linger`
+- Backup/restore drill passed: cloned from GitHub → tests pass (6/6) → dashboard serves correctly → cleanup complete
+- RUNBOOK.md expanded: systemd commands, restore-from-GitHub procedure, custom port, troubleshooting
+- Hardening report: `reports/phase5b-deployment-restore-report.md`
+
 **Exit criteria:**
 - [ ] Can start a new project and have reasonable confidence it will complete
 - [x] Failure modes documented with recovery steps (RUNBOOK.md in pilot repo)
-- [ ] Backup/restore tested at least once
+- [x] Backup/restore tested at least once (GitHub clone → test → serve → verified)
 - [ ] CEO can trigger a project build with minimal involvement
