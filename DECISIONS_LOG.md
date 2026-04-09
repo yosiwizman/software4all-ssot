@@ -146,3 +146,25 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 **Decision:** Select `s4a-factory-dashboard` as the Phase 4 pilot project. A single-page local web dashboard (localhost:3200) showing factory service status, machine vitals, and SSOT phase. Built with Node.js (built-in http module, no framework), reviewed by Codex, QA'd with Playwright. Three existing candidates were evaluated and rejected: ai-desktop-health (already completed), HRM (external repo, not S4A-owned), AKIOR (too large and complex for a first pilot). Port 3200 chosen to avoid conflicts with Paperclip (3100), Jarvis (3000-3002), and Ollama (11434).
 **Rationale:** Phase 4 requires a real project through the full delivery pipeline. No existing project fits — ai-desktop-health was built before the pipeline existed, HRM is external, and AKIOR is too complex. A new small project designed specifically as a pipeline test is the safest path. The dashboard is genuinely useful (CEO visibility into factory state) and exercises all pipeline stages with low risk.
 **Authorship:** CTO-recommended, CEO-approved (scope approved 2026-04-09)
+
+### DEC-022: Phase 6 — s4a-slice-orchestrator as next factory backend project
+**Date:** 2026-04-09
+**Decision:** Add s4a-slice-orchestrator as Phase 6 in the roadmap. This is a new factory backend subsystem — an execution and verification layer that enforces delivery slice discipline programmatically. It operationalizes existing SSOT doctrine (slice rules, retry policy, stop conditions, claim classification) into an explicit state machine with transition guards, evidence packets, and human approval gates. Placed as Phase 6 (not Phase 5C) because it is a new subsystem, not a hardening step for existing infrastructure.
+
+**Stack direction for this project:**
+- **Temporal** — durable workflow execution (retry, replay, resume, signals)
+- **Cedar** — declarative policy evaluation for transition guards
+- **TLA+ + Apalache** — formal specification and model checking of state machine (before implementation)
+- **Dafny** — deferred to post-MVP; mathematical proof for safety-critical guards
+
+**Implementation law:** NASA Power of Ten coding rules — simple control flow, bounded loops, small functions, explicit assertions, checked returns, zero-warning discipline, tool-verifiable rules first.
+
+**Key constraints:**
+- TLA+ spec must be written and model-checked BEFORE any implementation code
+- Factory-owned backend logic, not SSOT and not a Paperclip fork
+- Local-first, no cloud dependencies
+- Claude Code is pre-flagged as primary builder (task exceeds OpenCode capability)
+- Runs in `~/projects/s4a-slice-orchestrator`
+
+**Rationale:** The factory currently enforces delivery discipline by convention — agents read CLAUDE.md and follow written rules. This is fragile. A programmatic enforcement layer ensures every slice flows through a verified path: no skipped reviews, no silent transitions, no risky actions without approval. Temporal provides durability and retry. Cedar provides auditable policies. TLA+ catches design errors before they become code bugs.
+**Authorship:** CEO-directed

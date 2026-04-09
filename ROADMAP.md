@@ -181,3 +181,48 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - [x] Failure modes documented with recovery steps (RUNBOOK.md in pilot repo)
 - [x] Backup/restore tested at least once (GitHub clone → test → serve → verified)
 - [ ] CEO can trigger a project build with minimal involvement
+
+---
+
+## Phase 6: Slice Orchestration Backend
+
+**Goal:** Build s4a-slice-orchestrator — the backend execution and verification layer that enforces tiny, durable, policy-checked delivery slices with an explicit state machine, transition guards, evidence packets, and human approval gates.
+
+**Why a new phase (not Phase 5C):** Phase 5 hardens the existing factory. Phase 6 adds a new factory subsystem — a structured execution backend that operationalizes existing SSOT doctrine (slice rules, retry policy, stop conditions, claim classification) into enforceable runtime logic. It does not replace doctrine — it enforces it programmatically.
+
+**Relationship to existing factory:**
+- s4a-slice-orchestrator is factory-owned backend logic
+- It is NOT the SSOT (governance stays here)
+- It is NOT a Paperclip fork (Paperclip remains the upstream control plane)
+- It sits between Paperclip and builder agents, enforcing slice discipline at the execution layer
+
+**Subsystem stack:**
+- **Workflow runtime:** Temporal (durable execution, retry, replay, resume)
+- **Policy/authorization:** Cedar (declarative policy checks before state transitions)
+- **Verification/model checking:** TLA+ + Apalache (formal spec of state machine, checked before implementation)
+- **Proof-only critical validators (deferred):** Dafny (mathematical proof for safety-critical transition guards — build later, not in MVP)
+
+**Implementation law — NASA Power of Ten:**
+1. Simple control flow — no recursion, no goto
+2. Bounded loops — all loops have a fixed upper bound
+3. No dynamic memory after initialization
+4. Small functions — no function longer than one printed page (~60 lines)
+5. Assertions — at least 2 assertions per function
+6. Minimal scope — declare variables at the smallest possible scope
+7. Checked returns — every return value checked, every error handled
+8. Zero-warning discipline — compiler/linter warnings are errors
+9. Tool-verifiable rules first — if a tool can check it, the tool must check it
+10. No hidden complexity — every side effect is visible in the function signature
+
+**Intake:** `reports/phase6-slice-orchestrator-intake.md`
+**MVP plan:** `reports/phase6-slice-orchestrator-mvp-plan.md`
+**Repo (planned):** `~/projects/s4a-slice-orchestrator`
+
+**Exit criteria:**
+- [ ] State machine formally specified in TLA+ and checked by Apalache
+- [ ] Core Temporal workflow running locally with slice lifecycle (DRAFT → READY → BUILDING → REVIEWING → DONE)
+- [ ] Cedar policies enforce at least 3 transition guards
+- [ ] Evidence packet emitted at each state transition
+- [ ] Human approval gate verified for at least one risky transition
+- [ ] Retry/rollback paths tested
+- [ ] Integration with existing delivery pipeline documented
