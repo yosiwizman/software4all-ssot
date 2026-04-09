@@ -284,11 +284,25 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Workflow extended: DRAFT → SCOPED → BUILDING → REVIEWING → VERIFYING → AWAITING_APPROVAL → APPROVED
 - New signals: reportTests, reportReview, approve
 
+**Phase 6D — Failure paths, DEPLOYED, pipeline integration (2026-04-09):**
+- CEO approved Phase 6D (DENY/retry/rollback, DEPLOYED, pipeline doc)
+- Cedar DENY path proven: BUILDING→REVIEWING denied when tests fail → BLOCKED
+  - DENY evidence packet emitted with `decision: "DENY"`
+- Retry path proven: BLOCKED→SCOPED via retry signal (retryCount reset per TLA+ T14)
+- Rollback path proven: BUILDING→ROLLED_BACK via rollback signal (per TLA+ T16)
+- DEPLOYED transition proven: APPROVED→DEPLOYED via deploy signal (per TLA+ T13)
+- Full 12-state type implemented in runtime (all states in SliceState union)
+- Proof script (src/proof.ts): 4 proofs, ALL PASS, 21 evidence packets across 3 workflows
+- Delivery pipeline integration documented in DELIVERY_PIPELINE.md
+  - Pipeline stage → orchestrator state mapping
+  - Failure handling → orchestrator state mapping
+  - Usage guide and future integration points
+
 **Exit criteria:**
 - [x] State machine formally specified in TLA+ and checked by Apalache
-- [~] Core Temporal workflow running locally with slice lifecycle — **7 of 12 states implemented (through APPROVED), DEPLOYED and failure paths deferred**
-- [x] Cedar policies enforce at least 3 transition guards — **5 policies guard 5 transitions**
-- [x] Evidence packet emitted at each state transition — **6 packets in proof run**
+- [x] Core Temporal workflow running locally with slice lifecycle — **all 12 states implemented, happy path reaches DEPLOYED, failure paths reach BLOCKED/ROLLED_BACK**
+- [x] Cedar policies enforce at least 3 transition guards — **5 policies guard 5 transitions, DENY proven**
+- [x] Evidence packet emitted at each state transition — **21 packets in proof run (7 happy + 11 deny-retry + 3 rollback)**
 - [x] Human approval gate verified for at least one risky transition — **AWAITING_APPROVAL → APPROVED**
-- [ ] Retry/rollback paths tested
-- [ ] Integration with existing delivery pipeline documented
+- [x] Retry/rollback paths tested — **BLOCKED→SCOPED retry proven, ANY→ROLLED_BACK proven**
+- [x] Integration with existing delivery pipeline documented — **DELIVERY_PIPELINE.md updated**

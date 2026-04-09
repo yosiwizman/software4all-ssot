@@ -225,3 +225,50 @@ Findings from running s4a-factory-dashboard through the pipeline end-to-end. See
 - Add a Codex review step after each build commit — even if automated, it catches issues the builder misses
 - Add Playwright as a standard QA tool for any project with a web UI
 - Fix template copy instructions to exclude TEMPLATE_USAGE.md
+
+---
+
+## Slice orchestrator integration (Phase 6)
+
+The s4a-slice-orchestrator enforces this pipeline programmatically using a formal 12-state machine (verified by TLA+/Apalache). Each pipeline stage maps to one or more orchestrator states.
+
+### Pipeline stage → orchestrator state mapping
+
+| Pipeline stage | Orchestrator state(s) | Guard / trigger | Evidence emitted |
+|---------------|----------------------|-----------------|-----------------|
+| Idea | (pre-workflow) | CEO describes the idea | — |
+| Intake | DRAFT | Workflow created with sliceId + description | Yes |
+| Scope / Spec | DRAFT → SCOPED | Cedar: `scope_required` (scopeApproved=true) | Yes |
+| Build | SCOPED → BUILDING | Cedar: `builder_required` (builderAssigned=true) | Yes |
+| Review | BUILDING → REVIEWING | Cedar: `tests_required` (testsPass+commitExists) | Yes |
+| QA | REVIEWING → VERIFYING | Cedar: `review_required` (reviewApproved=true) | Yes |
+| Approval | VERIFYING → AWAITING_APPROVAL → APPROVED | Cedar: `approval_required` (approvalGranted=true) | Yes |
+| Deploy | APPROVED → DEPLOYED | Deploy signal from CEO | Yes |
+| Maintenance | (post-workflow) | New slice for fixes/features | — |
+
+### Failure handling → orchestrator states
+
+| Failure scenario | Orchestrator path | Trigger |
+|-----------------|-------------------|---------|
+| Build fails (tests don't pass) | BUILDING → BLOCKED (Cedar DENY) | reportTests(fail) signal |
+| Retry after failure | BLOCKED → SCOPED (retryCount reset) | retry signal from CEO |
+| Review rejection | REVIEWING → BUILDING (retry) | reportReview(reject) signal |
+| CEO cancels / rolls back | ANY → ROLLED_BACK | rollback signal from CEO |
+| Unrecoverable failure | BUILDING/REVIEWING → FAILED (retryCount exhausted) | Automatic after MAX_RETRY |
+
+### How to use
+
+1. **Start the orchestrator:** `temporal server start-dev` + `node dist/worker.js`
+2. **Create a slice:** `node dist/client.js` (creates a workflow, prints workflowId)
+3. **Drive the lifecycle:** Send signals via `node dist/signal.js <signal> <workflowId>`
+4. **Check state:** `temporal workflow query --workflow-id <id> --type getState`
+5. **Review evidence:** Inspect `evidence/<sliceId>/` for JSON evidence packets
+
+### Integration points (future)
+
+| Integration | Status | When |
+|------------|--------|------|
+| Paperclip → orchestrator | Deferred | When Paperclip task routing is automated |
+| Builder agents → orchestrator | Deferred | When OpenCode/Claude Code report via signals |
+| Dashboard → orchestrator | Deferred | When s4a-factory-dashboard shows slice status |
+| Codex → orchestrator | Deferred | When Codex review results are routed as signals |
