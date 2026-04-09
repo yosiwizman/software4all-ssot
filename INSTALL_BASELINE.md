@@ -42,7 +42,7 @@ These tools are present, verified, and approved for use.
 | VS Code | 1.114.0 | Standard IDE |
 | Chrome | installed | Browser |
 | Firefox | installed | Browser |
-| UFW | 0.36.2-6 | Firewall — installed, needs sudo to verify/configure (see SECURITY_BASELINE.md) |
+| UFW | 0.36.2-6 | Firewall — active, deny incoming, allow outgoing, enabled on startup |
 | RustDesk | 1.3.8 | Standard remote access (DEC-014) |
 
 ## Required next installs

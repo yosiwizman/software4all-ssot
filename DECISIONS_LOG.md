@@ -101,3 +101,9 @@ Format: `### DEC-NNN: Title` with date, decision, rationale, and authorship.
 **Decision:** Immediate baseline is policy-only: no secrets in git, use gitignored `.env` and credential files only. The recommended future tool is `sops + age` for encrypted secrets at rest, to be installed when a project requires centralized credential management.
 **Rationale:** No project currently requires a secrets manager tool. Installing one now would be premature. The policy baseline (gitignore enforcement, no secrets in checked-in files) is sufficient for current risk level. sops+age is lightweight, offline-capable, and fits the local-first model.
 **Authorship:** CTO-recommended, CEO-approved
+
+### DEC-016: Runtime port ownership and project separation
+**Date:** 2026-04-09
+**Decision:** `localhost:3100` is the canonical Software 4 All / Paperclip local control-plane endpoint. Jarvis / AKIOR local dev services may use ports such as `3000/3001/3002`, but these are project-specific and must not be treated as Software 4 All control-plane endpoints. All project-specific services must remain localhost-only unless separately approved.
+**Rationale:** The ai-desktop machine hosts multiple local projects simultaneously. Explicit port ownership prevents cross-project confusion, accidental process interference, and incorrect operational assumptions.
+**Authorship:** CTO-recommended, CEO-approved

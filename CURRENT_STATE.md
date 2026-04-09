@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 1 security baseline)
+Last updated: 2026-04-09 (Phase 1 finalized)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -84,7 +84,7 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 
 | Item | Value | Status |
 |------|-------|--------|
-| UFW (firewall) | Installed (v0.36.2-6) but status unverified — requires sudo | Risk — needs CEO to run `sudo ufw status` and configure |
+| UFW (firewall) | Active, enabled on startup. Default: deny incoming, allow outgoing. Logging: low. | Confirmed |
 | RustDesk | v1.3.8 active (service + server + tray) | Confirmed — chosen as standard remote access |
 | GNOME Remote Desktop | System service active, RDP disabled, no credentials set | Confirmed — effectively inactive, not a risk |
 | Port 3000 | Was exposed (Jarvis dev-proxy on 0.0.0.0) — process killed | Confirmed resolved — no auto-restart mechanism found |
@@ -92,11 +92,22 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | Externally-reachable TCP | None after port 3000 fix | Confirmed — all TCP listeners now localhost-only |
 | Secrets management | Policy-only baseline — gitignore enforcement, no centralized tool yet | Confirmed — sops+age recommended for future |
 
+## Runtime port ownership
+
+| Port | Owner project | Service | Status |
+|------|--------------|---------|--------|
+| 3100 | Software 4 All / Paperclip | Control plane local entrypoint | Confirmed — localhost-only |
+| 3000 | Jarvis / AKIOR | Dev proxy (when running) | Not S4A — Jarvis project-specific, localhost-only |
+| 3001 | Jarvis / AKIOR | Next.js dev server (when running) | Not S4A — Jarvis project-specific, localhost-only |
+| 3002 | Jarvis / AKIOR | Reserved for Jarvis dev use | Not S4A — currently unused |
+
+See DEC-016 for the formal separation policy.
+
 ## Known risks
 
 | Risk | Severity | Details |
 |------|----------|---------|
-| UFW not configured | High | Installed but requires sudo to verify/configure. CEO action needed. See SECURITY_BASELINE.md. |
+| ~~UFW not configured~~ | ~~High~~ | **Resolved** — Active, deny incoming, allow outgoing, enabled on startup. |
 | CUDA version mismatch | Medium | Toolkit 12.0 installed, driver supports 13.0. May limit model performance. |
 | cuDNN missing | Medium | Required for many ML workloads. |
 | No secrets manager tool | Medium | Policy baseline set. No centralized tool yet. sops+age recommended for later phase. |
@@ -106,7 +117,8 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 
 ## What is working
 
-- Paperclip control plane operational
+- UFW firewall active (deny incoming, allow outgoing, enabled on startup)
+- Paperclip control plane operational on localhost:3100
 - OpenCode builds functional
 - Claude Code operational with hooks, guards, and oh-my-claudecode hardening
 - Codex available for review
@@ -121,7 +133,6 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 
 ## What is not yet verified
 
-- UFW firewall status and rules (requires sudo)
 - GPU multi-device routing and scheduling
 - Ollama model loading across GPU1/GPU2
 - Full delivery pipeline end-to-end

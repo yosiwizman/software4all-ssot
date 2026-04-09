@@ -20,17 +20,11 @@ Minimum security standards for the ai-desktop machine and the software factory. 
 - All dev services (3000, 3002, 8080, etc.): localhost only unless explicitly opened
 - Ollama API: localhost only (127.0.0.1:11434)
 
-**Current status (2026-04-09):** UFW is installed (v0.36.2-6) but its active/inactive state could not be verified — requires sudo access. This is the **remaining Phase 1 blocker**.
-
-**CEO action required:** Run the following commands in a terminal (password will be prompted):
-```
-sudo ufw status verbose
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw enable
-sudo ufw status verbose
-```
-Then report the output so CURRENT_STATE.md can be updated to Confirmed.
+**Current status (2026-04-09):** UFW is active and enabled on system startup.
+- Default: deny incoming, allow outgoing
+- Routed: disabled
+- Logging: on (low)
+- No explicit allow rules added yet (default-deny covers all inbound)
 
 ---
 
@@ -46,6 +40,22 @@ No service may listen on 0.0.0.0 (all interfaces) unless:
 - **Port 3000** was a Jarvis V5 OS `dev-proxy-http.mjs` (node) bound to `0.0.0.0`. It was a stale dev process, not a production service. Process killed. No auto-restart mechanism found (no systemd service, no cron).
 - **Port 3002** had nothing listening. The original concern is cleared.
 - **Current state:** All TCP services are now bound to localhost only. No externally-reachable TCP listeners remain.
+
+## Runtime port ownership (DEC-016)
+
+This machine hosts multiple projects. Port ownership prevents cross-project confusion.
+
+| Port | Owner | Purpose | Rule |
+|------|-------|---------|------|
+| **3100** | **Software 4 All / Paperclip** | Control plane local entrypoint | Canonical S4A endpoint. Do not reassign. |
+| 3000 | Jarvis / AKIOR | Dev proxy | Not S4A. Jarvis-only. Localhost-only. |
+| 3001 | Jarvis / AKIOR | Next.js dev server | Not S4A. Jarvis-only. Localhost-only. |
+| 3002 | Jarvis / AKIOR | Reserved for Jarvis dev | Not S4A. Currently unused. Localhost-only. |
+
+**Rules:**
+- All project-specific local services must bind to `127.0.0.1` unless separately approved
+- Non-3100 ports must never be treated as Software 4 All control-plane endpoints
+- If a new project needs local ports, document ownership before binding
 
 ---
 
@@ -143,7 +153,7 @@ No service may listen on 0.0.0.0 (all interfaces) unless:
 | Concern | Severity | Status | Action needed |
 |---------|----------|--------|---------------|
 | Ports 3000/3002 exposed to network | ~~High~~ | **Resolved** | Port 3000 process killed, port 3002 was clear. All TCP now localhost-only. |
-| UFW not confirmed active | High | Unverified | Requires sudo — CEO must run UFW commands (see Firewall section above) |
+| UFW not confirmed active | ~~High~~ | **Resolved** | Active, deny incoming, allow outgoing, enabled on startup. |
 | No secrets manager tool | Medium | Policy set | sops+age recommended for future. Policy enforcement sufficient for now. |
 | Multiple remote access tools | ~~Medium~~ | **Resolved** | RustDesk chosen as standard (DEC-014). GNOME RD inactive. |
 | Scattered credentials | Medium | Known | Consolidate when secrets tool is adopted |

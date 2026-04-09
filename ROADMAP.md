@@ -24,30 +24,20 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 1: Security and Machine Baseline — IN PROGRESS
+## Phase 1: Security and Machine Baseline — COMPLETE
 
 **Goal:** Lock down the machine, close known gaps, establish security standards as enforceable practice.
 
 **Outputs:**
-- Firewall configured (UFW) — localhost-only for dev services
+- UFW firewall active (deny incoming, allow outgoing, enabled on startup)
 - Ports 3000/3002 exposure resolved
-- Remote access consolidated to one method
-- SSH key policy enforced
-- Secrets management baseline established
+- Remote access consolidated to RustDesk (DEC-014)
+- Secrets management policy baseline established (DEC-015)
+- Runtime port ownership formalized — S4A on 3100, Jarvis on 3000-3002 (DEC-016)
 - CURRENT_STATE.md updated with confirmed security state
 
-**Progress (2026-04-09):**
-- Port 3000 exposure resolved (stale Jarvis dev-proxy killed, no auto-restart)
-- Port 3002 confirmed clear (nothing was listening)
-- All TCP services confirmed localhost-only
-- Remote access standardized on RustDesk (DEC-014)
-- Secrets management policy baseline set (DEC-015)
-- SSOT branch policy established (DEC-013)
-
-**Remaining blocker:** UFW firewall configuration requires sudo access. CEO must run the UFW commands documented in SECURITY_BASELINE.md.
-
 **Exit criteria:**
-- [ ] UFW active with explicit allow-list — **BLOCKED: requires sudo**
+- [x] UFW active with default-deny incoming
 - [x] No unexpected ports exposed to network
 - [x] Single remote access method chosen and documented
 - [x] Secrets management approach decided and logged in DECISIONS_LOG.md
