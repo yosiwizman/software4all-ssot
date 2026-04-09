@@ -144,7 +144,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 5: Production Hardening
+## Phase 5: Production Hardening — IN PROGRESS
 
 **Goal:** Make the factory reliable enough for repeated use with confidence.
 
@@ -156,8 +156,19 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Cost tracking per project
 - Runbook for common failure modes
 
+**Phase 5A — Hardening pack 1 (2026-04-09):**
+- Pilot repo cleanup: removed TEMPLATE_USAGE.md, fixed SSOT template copy instructions
+- Added package.json with start/test/test:browser scripts (zero runtime deps)
+- Added RUNBOOK.md — CEO-readable operator guide (start, stop, test, verify, troubleshoot, rollback)
+- Added Playwright browser smoke tests: 2 tests (page sections + JSON API) — 2/2 pass
+- Ran Codex review (codex-cli 0.118.0, gpt-5.4): 2 findings, both fixed:
+  - P1: Hardened smoke test before() hook (rejects on server crash instead of masking)
+  - P2: Added HTML escaping for all dynamic content (XSS prevention)
+- Total test coverage: 8/8 (6 node + 2 Playwright)
+- Hardening report: `reports/phase5a-hardening-report.md`
+
 **Exit criteria:**
 - [ ] Can start a new project and have reasonable confidence it will complete
-- [ ] Failure modes documented with recovery steps
+- [x] Failure modes documented with recovery steps (RUNBOOK.md in pilot repo)
 - [ ] Backup/restore tested at least once
 - [ ] CEO can trigger a project build with minimal involvement

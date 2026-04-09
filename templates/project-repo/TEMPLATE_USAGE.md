@@ -13,11 +13,13 @@ This template defines the standard file structure for a new Software 4 All proje
    git init
    ```
 
-3. **Copy this template into the new repo:**
+3. **Copy this template into the new repo (excluding this usage guide):**
    ```bash
-   cp -r ~/software4all-ssot/templates/project-repo/* <project-repo>/
-   cp ~/software4all-ssot/templates/project-repo/.gitignore <project-repo>/
+   cd ~/software4all-ssot/templates/project-repo
+   cp README.md CLAUDE.md .gitignore <project-repo>/
+   cp -r docs <project-repo>/
    ```
+   **Do not copy TEMPLATE_USAGE.md** — it is reference material for the SSOT repo, not a project file.
 
 4. **Fill in placeholders.** Search for `{{PLACEHOLDER}}` markers in the copied files and replace them with project-specific values from the approved intake.
 
