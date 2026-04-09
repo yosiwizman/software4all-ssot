@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 4 IN PROGRESS — pilot selected, awaiting CEO approval)
+Last updated: 2026-04-09 (Phase 4 COMPLETE — pilot built, tested, deployed, lessons documented)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -101,6 +101,7 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | 3000 | Jarvis / AKIOR | Dev proxy (when running) | Not S4A — Jarvis project-specific, localhost-only |
 | 3001 | Jarvis / AKIOR | Next.js dev server (when running) | Not S4A — Jarvis project-specific, localhost-only |
 | 3002 | Jarvis / AKIOR | Reserved for Jarvis dev use | Not S4A — currently unused |
+| 3200 | S4A Factory Dashboard | Phase 4 pilot — local status dashboard | Confirmed — localhost-only, manual start via `node server.js` |
 
 See DEC-016 for the formal separation policy.
 
@@ -180,6 +181,7 @@ See DEC-016 for the formal separation policy.
 | ~/projects/akior | AKIOR application code | yosiwizman/AKIOR_AUOTONOMUS_ASSISTENT | Confirmed |
 | ~/projects/ai-desktop-health | Machine health monitoring | local | Confirmed |
 | ~/projects/HRM | HRM project | local | Confirmed |
+| ~/projects/s4a-factory-dashboard | Phase 4 pilot — factory status dashboard | local (pending remote) | Confirmed |
 | ~/ai-env | Python virtualenv (not a project repo) | n/a | Confirmed |
 | ~/claude-desktop-debian | Claude Desktop .deb build scripts | local | Confirmed |
 | ~/.openclaw/workspace | OpenClaw managed workspace | local | Confirmed |

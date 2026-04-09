@@ -105,7 +105,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 4: Pilot Project Flow — IN PROGRESS
+## Phase 4: Pilot Project Flow — COMPLETE
 
 **Goal:** Run one real project through the full delivery pipeline end to end. Validate the factory works.
 
@@ -121,14 +121,26 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - **Project:** s4a-factory-dashboard — local status dashboard for the CEO
 - **Selection report:** `reports/phase4-pilot-selection.md`
 - **Intake form:** `reports/phase4-pilot-intake.md`
-- **Repo (planned):** `~/projects/s4a-factory-dashboard`
-- **Status:** Awaiting CEO scope approval before build begins
+- **Repo:** `~/projects/s4a-factory-dashboard`
+
+**Pilot built (Phase 4B — 2026-04-09):**
+- CEO scope approval granted
+- Repo scaffolded from `templates/project-repo/`, placeholders filled
+- server.js built: single-file Node.js dashboard on localhost:3200
+- HTML dashboard + JSON API (`/api/status`)
+- Live service checks: Paperclip (UP), Ollama (UP), OpenClaw (UP)
+- Machine vitals: hostname, uptime, load, RAM, 3x GPU (nvidia-smi)
+- SSOT phases: parsed from ROADMAP.md (5 phases shown correctly)
+- 6/6 smoke tests pass (node --test)
+- Live verification: HTML serves, JSON valid, 404 correct, port 3200 confirmed
+- Zero external dependencies — Node.js built-in modules only
+- Pipeline report: `reports/phase4-pilot-report.md`
 
 **Exit criteria:**
-- [ ] Pilot project delivered and working
-- [ ] Pipeline report written in `reports/`
-- [ ] At least 3 improvement items identified
-- [ ] DELIVERY_PIPELINE.md updated with lessons learned
+- [x] Pilot project delivered and working (localhost:3200, 6/6 tests pass)
+- [x] Pipeline report written in `reports/` (`reports/phase4-pilot-report.md`)
+- [x] At least 3 improvement items identified (6 items documented in pilot report)
+- [x] DELIVERY_PIPELINE.md updated with lessons learned
 
 ---
 

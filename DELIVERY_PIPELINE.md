@@ -164,3 +164,28 @@ Review finds issues → return to builder (same level, up to 2 fix attempts)
 | Maintenance | Notified of issues | Decide priority |
 
 **Target:** CEO touches 3-5% of steps. Everything else is autonomous within these rules.
+
+---
+
+## Lessons learned (Phase 4 pilot — 2026-04-09)
+
+Findings from running s4a-factory-dashboard through the pipeline end-to-end. See `reports/phase4-pilot-report.md` for the full report.
+
+### What worked
+- Intake template was practical and complete — no ambiguity during build
+- Project repo template (scaffold) worked as designed — placeholders filled cleanly
+- Zero-dependency build was fast and reliable
+- Node.js built-in test runner provided adequate smoke tests
+- SSOT cross-references kept the project aligned with standards
+
+### Gaps identified
+1. **Paperclip orchestration not tested.** The pilot was built by Claude Code directly, bypassing the Paperclip → OpenCode → Codex flow. The pipeline stages are defined but not yet automated through the control plane.
+2. **Codex review stage skipped.** No independent review agent was invoked. Builder self-reviewed. This reduces the value of the review stage.
+3. **Playwright QA not used.** Browser-level testing was replaced by curl and Node.js test runner. Adequate for this pilot, but insufficient for UI-heavy projects.
+4. **Template copies TEMPLATE_USAGE.md into project repos.** This file is reference material for SSOT, not a project file. Copy instructions should exclude it.
+
+### Recommended pipeline improvements
+- Wire Paperclip to route build tasks to OpenCode first, then escalate to Claude Code on failure
+- Add a Codex review step after each build commit — even if automated, it catches issues the builder misses
+- Add Playwright as a standard QA tool for any project with a web UI
+- Fix template copy instructions to exclude TEMPLATE_USAGE.md
