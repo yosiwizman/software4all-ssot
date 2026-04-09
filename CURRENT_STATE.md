@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 1 finalized)
+Last updated: 2026-04-09 (Phase 2A — runtime completion partial)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -30,8 +30,8 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | Kernel | 6.17.0-20-generic | Confirmed |
 | NVIDIA driver | 580.126.09 | Confirmed |
 | Driver CUDA support | Up to 13.0 | Confirmed |
-| Installed CUDA toolkit | 12.0 | Risk — mismatch with driver capability |
-| cuDNN | Not installed | Missing |
+| Installed CUDA toolkit | 12.0.140 (Ubuntu `nvidia-cuda-toolkit` package) | Risk — driver supports 13.0, toolkit is 12.0 |
+| cuDNN (system) | Not installed as system package | Missing — Ollama bundles its own cuDNN 9.20.0 internally |
 
 ## AI / Agent stack
 
@@ -69,8 +69,8 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | tmux | 3.4 | Confirmed |
 | sqlite3 | 3.45.1 | Confirmed |
 | VS Code | 1.114.0 | Confirmed |
-| Docker | not installed | Missing |
-| uv | not installed | Missing |
+| Docker | not installed | Missing — requires sudo to install |
+| uv | 0.11.6 | Confirmed |
 
 ## Browsers
 
@@ -108,8 +108,8 @@ See DEC-016 for the formal separation policy.
 | Risk | Severity | Details |
 |------|----------|---------|
 | ~~UFW not configured~~ | ~~High~~ | **Resolved** — Active, deny incoming, allow outgoing, enabled on startup. |
-| CUDA version mismatch | Medium | Toolkit 12.0 installed, driver supports 13.0. May limit model performance. |
-| cuDNN missing | Medium | Required for many ML workloads. |
+| CUDA version mismatch | Medium | Toolkit 12.0.140 (Ubuntu pkg) vs driver 13.0 capability. Upgrade requires NVIDIA repo, not trivial. See CUDA audit notes below. |
+| cuDNN missing (system) | Medium | Ollama bundles cuDNN 9.20.0 internally. System-wide cuDNN for custom ML workloads not installed. |
 | No secrets manager tool | Medium | Policy baseline set. No centralized tool yet. sops+age recommended for later phase. |
 | Duplicate AKIOR repos | Low | ~/akior and ~/projects/akior may both exist. Need consolidation. |
 | pnpm/bun path overlap | Low | Both installed; standard defined (pnpm for packages, bun for runtime only). |
@@ -129,7 +129,29 @@ See DEC-016 for the formal separation policy.
 - GPU0 (96GB) available for inference
 - RustDesk remote access active
 - All TCP services bound to localhost (no external exposure)
+- uv Python package manager operational
 - SSOT repo committed and pushed to GitHub
+
+## CUDA / cuDNN audit (2026-04-09)
+
+| Item | Value | Source |
+|------|-------|--------|
+| NVIDIA driver | 580.126.09 | `nvidia-smi` |
+| Driver max CUDA | 13.0 | `nvidia-smi` header |
+| Installed CUDA toolkit | 12.0.140 | `nvcc --version`, Ubuntu `nvidia-cuda-toolkit` package |
+| CUDA install path | System packages (no `/usr/local/cuda` symlink) | `dpkg -l`, filesystem check |
+| cuDNN (system) | Not installed | `dpkg -l` |
+| cuDNN (Ollama internal) | 9.20.0 in `/usr/local/lib/ollama/mlx_cuda_v13/` | Filesystem check |
+| GPU0 | RTX PRO 6000 Blackwell 96GB VRAM | `nvidia-smi` |
+| GPU1 | RTX 3090 24GB VRAM | `nvidia-smi` |
+| GPU2 | RTX 4060 Ti 16GB VRAM (desktop display attached) | `nvidia-smi` |
+
+**CUDA upgrade assessment:**
+- The installed toolkit (12.0) came from Ubuntu's `nvidia-cuda-toolkit` package, not from NVIDIA's CUDA repo.
+- Upgrading to CUDA 13.x requires adding NVIDIA's official apt repository and may conflict with Ubuntu's packaged version.
+- This is not a trivial `apt upgrade` — it requires careful package management to avoid breaking the driver or existing CUDA-dependent tools.
+- **Recommendation:** Defer CUDA toolkit upgrade until a specific project requires CUDA 13.x features. The current 12.0 toolkit works with the 580.x driver for compilation and most workloads. Ollama already bundles its own CUDA 13 runtime internally.
+- **cuDNN:** Install system cuDNN only when a project requires training or custom inference outside Ollama. Match cuDNN version to whichever CUDA toolkit is active at that time.
 
 ## What is not yet verified
 

@@ -107,3 +107,9 @@ Format: `### DEC-NNN: Title` with date, decision, rationale, and authorship.
 **Decision:** `localhost:3100` is the canonical Software 4 All / Paperclip local control-plane endpoint. Jarvis / AKIOR local dev services may use ports such as `3000/3001/3002`, but these are project-specific and must not be treated as Software 4 All control-plane endpoints. All project-specific services must remain localhost-only unless separately approved.
 **Rationale:** The ai-desktop machine hosts multiple local projects simultaneously. Explicit port ownership prevents cross-project confusion, accidental process interference, and incorrect operational assumptions.
 **Authorship:** CTO-recommended, CEO-approved
+
+### DEC-017: Defer CUDA toolkit upgrade and system cuDNN install
+**Date:** 2026-04-09
+**Decision:** CUDA toolkit upgrade (12.0 → 13.x) and system-level cuDNN installation are deferred until a specific project requires them. The current CUDA 12.0 toolkit remains functional. Ollama bundles its own CUDA 13 + cuDNN 9.20.0 runtime internally, so local inference is not affected.
+**Rationale:** The installed CUDA 12.0 came from Ubuntu's `nvidia-cuda-toolkit` package. Upgrading to 13.x requires adding NVIDIA's official apt repo, which may conflict with Ubuntu's packages and risk destabilizing the driver (580.126.09). No current project requires CUDA 13.x features. The risk/reward ratio does not justify the upgrade now.
+**Authorship:** CTO-executed

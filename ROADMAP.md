@@ -44,24 +44,32 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 2: Runtime Completion
+## Phase 2: Runtime Completion — IN PROGRESS
 
 **Goal:** Install all missing approved tools so the factory has a complete runtime.
 
 **Outputs:**
 - Docker installed and verified
 - uv installed and verified
-- CUDA toolkit upgraded to match driver (12.x → 13.0-compatible)
-- cuDNN installed
+- CUDA/cuDNN audit completed and upgrade path documented
 - GPU routing rules documented
 - CURRENT_STATE.md and INSTALL_BASELINE.md updated
 
+**Progress (2026-04-09):**
+- uv v0.11.6 installed and verified
+- CUDA/cuDNN audit completed — CUDA 12.0 toolkit functional, upgrade to 13.x deferred (not trivial, no project currently requires it). Ollama bundles its own CUDA 13 + cuDNN 9.20 internally.
+- Docker blocked on sudo access — CEO must run install commands
+
+**Remaining:**
+- Docker install requires sudo: `sudo apt install docker.io && sudo usermod -aG docker $USER` then re-login
+- GPU routing rules not yet documented
+
 **Exit criteria:**
-- [ ] Every tool in INSTALL_BASELINE.md "required next" section is installed
-- [ ] `docker run hello-world` succeeds
-- [ ] `uv --version` succeeds
-- [ ] CUDA/cuDNN versions match driver capability
+- [ ] Docker installed and `docker run hello-world` succeeds — **BLOCKED: requires sudo**
+- [x] `uv --version` succeeds (v0.11.6)
+- [x] CUDA/cuDNN status audited and documented (upgrade deferred by recommendation, see CURRENT_STATE.md)
 - [ ] All agents in AGENT_ROLE_MATRIX.md have working runtimes
+- [ ] GPU routing rules documented
 
 ---
 

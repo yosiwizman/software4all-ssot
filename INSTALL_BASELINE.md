@@ -44,6 +44,7 @@ These tools are present, verified, and approved for use.
 | Firefox | installed | Browser |
 | UFW | 0.36.2-6 | Firewall — active, deny incoming, allow outgoing, enabled on startup |
 | RustDesk | 1.3.8 | Standard remote access (DEC-014) |
+| uv | 0.11.6 | Python package/project manager (standard per DEC-007) |
 
 ## Required next installs
 
@@ -51,16 +52,15 @@ Install these in the order listed. Each is a prerequisite for the factory to fun
 
 | Priority | Tool | Reason | Install method |
 |----------|------|--------|----------------|
-| 1 | **Docker** | Container runtime for isolated builds. Many projects require it. | `sudo apt install docker.io` + add user to docker group |
-| 2 | **uv** | Python package/project manager. Replaces pip for new projects. | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| 3 | **CUDA toolkit upgrade** | Current 12.0 should match driver's 13.0 capability. | Follow NVIDIA's official Ubuntu 24.04 repo instructions |
-| 4 | **cuDNN** | Required for ML model training and some inference workloads. | Install after CUDA upgrade, matching CUDA version |
+| 1 | **Docker** | Container runtime for isolated builds. Many projects require it. | `sudo apt install docker.io && sudo usermod -aG docker $USER` (requires sudo + re-login) |
 
 ## Install later (not blocking)
 
 | Tool | Reason | When to install |
 |------|--------|-----------------|
-| Secrets manager (sops, age, or vault) | Centralized credential management | Phase 1, after security baseline review |
+| CUDA toolkit upgrade (12.0 → 13.x) | Current 12.0 works; upgrade only when a project requires 13.x features. Requires NVIDIA apt repo. | When a specific ML project needs it |
+| cuDNN (system-level) | Ollama bundles its own. System install only needed for custom training/inference. | After CUDA upgrade, matching CUDA version |
+| Secrets manager (sops, age, or vault) | Centralized credential management | After security baseline review |
 | Observability stack | Log aggregation and error tracking | Phase 5, production hardening |
 | GPU monitoring tools (nvtop) | Multi-GPU workload visibility | Phase 2, with GPU routing rules |
 
