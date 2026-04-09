@@ -389,3 +389,16 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - [x] Envelope examples for common commands
 - [x] Documentation updated with error handling, exit codes, subprocess pattern
 - [x] No external repos modified
+
+**Phase 8B — Paperclip-ready wrapper (2026-04-09):**
+- CEO approved Phase 8B (wrapper + timeout/retry + helper reroute)
+- `src/wrapper.ts`: stdin JSON input, calls harness as subprocess
+  - Timeout: 30s default (S4A_TIMEOUT_MS env override)
+  - Retry: max 2 retries for CONNECTION_FAILED/TIMEOUT only (1s, 2s backoff)
+  - No retry for validation/workflow errors
+  - retryAttempt field in response envelope
+- Helper scripts rerouted through wrapper (stdin pipe)
+- Architecture: Control Plane → wrapper (stdin) → harness (subprocess) → adapter-core → Temporal
+- Wrapper proof: 11 tests via stdin pipe subprocess, ALL PASS
+  - Full lifecycle DRAFT→DEPLOYED, error cases, retry metadata, 7 evidence packets
+- No external repos modified
