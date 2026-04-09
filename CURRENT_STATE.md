@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 2 — runtime completion)
+Last updated: 2026-04-09 (Phase 2 COMPLETE — all exit criteria met)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -132,6 +132,7 @@ See DEC-016 for the formal separation policy.
 - uv Python package manager operational
 - Docker operational (29.1.3, hello-world verified)
 - SSOT repo committed and pushed to GitHub
+- All agents in AGENT_ROLE_MATRIX.md have verified working runtimes (spot-checked 2026-04-09)
 
 ## CUDA / cuDNN audit (2026-04-09)
 
@@ -170,7 +171,7 @@ See DEC-016 for the formal separation policy.
 
 ## What is not yet verified
 
-- Ollama model loading across GPU1/GPU2 under real workloads
+- Ollama multi-GPU overflow under real large-model workloads (GPU0 handles all current models)
 - Full delivery pipeline end-to-end
 - Automated testing in pipeline
 - Backup and restore procedures

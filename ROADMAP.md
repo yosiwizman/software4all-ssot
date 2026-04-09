@@ -44,7 +44,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 2: Runtime Completion — IN PROGRESS
+## Phase 2: Runtime Completion — COMPLETE
 
 **Goal:** Install all missing approved tools so the factory has a complete runtime.
 
@@ -61,14 +61,11 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Docker 29.1.3 installed by CEO, verified (`hello-world` passed)
 - GPU routing rules documented (DEC-018) — GPU0 primary compute, GPU1 overflow, GPU2 display-reserved
 
-**Remaining:**
-- Verify all agents in AGENT_ROLE_MATRIX.md have working runtimes (spot check)
-
 **Exit criteria:**
 - [x] Docker installed and `docker run hello-world` succeeds (v29.1.3)
 - [x] `uv --version` succeeds (v0.11.6)
 - [x] CUDA/cuDNN status audited and documented (upgrade deferred by recommendation, see CURRENT_STATE.md)
-- [ ] All agents in AGENT_ROLE_MATRIX.md have working runtimes
+- [x] All agents in AGENT_ROLE_MATRIX.md have working runtimes (spot-checked 2026-04-09)
 - [x] GPU routing rules documented (DEC-018, see CURRENT_STATE.md)
 
 ---
