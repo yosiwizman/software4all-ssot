@@ -402,3 +402,43 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Wrapper proof: 11 tests via stdin pipe subprocess, ALL PASS
   - Full lifecycle DRAFT→DEPLOYED, error cases, retry metadata, 7 evidence packets
 - No external repos modified
+
+---
+
+## Phase 9: Paperclip Integration
+
+**Goal:** Connect the slice orchestrator to the live Paperclip control plane so slices can be managed through the existing factory interface.
+
+**Approach — opt-in bridge first (DEC-027):**
+- One new Express route in the Paperclip server, gated behind `S4A_ORCHESTRATOR_BRIDGE=1`
+- When disabled (default): zero behavior change, no new routes mounted
+- When enabled: POST `/api/s4a-orchestrator` accepts envelope JSON, spawns wrapper subprocess, returns response
+- Subprocess boundary retained: Paperclip → wrapper (stdin) → harness → adapter-core → Temporal
+- No broad Paperclip refactor, no UI changes, no schema changes
+
+**Paperclip repo:** `~/paperclip` (upstream: paperclipai/paperclip, branch: master)
+
+**Phase 9A — Opt-in bridge implementation (2026-04-09):**
+- CEO approved Phase 9A (opt-in bridge only)
+- Paperclip repo discovered: `~/paperclip` (PID 2003313, master branch, upstream paperclipai/paperclip)
+- Bridge route: `server/src/routes/s4a-orchestrator.ts`
+  - POST `/api/s4a-orchestrator` — accepts envelope JSON, spawns wrapper subprocess
+  - Gated behind `S4A_ORCHESTRATOR_BRIDGE=1` env var
+  - When disabled: 404, zero behavior change (proven)
+  - When enabled: all 10 commands available via Paperclip HTTP
+- Mount: `server/src/app.ts` — conditional after instanceSettingsRoutes
+- Proof: full lifecycle DRAFT→DEPLOYED through `curl localhost:3100/api/s4a-orchestrator`
+  - 7 commands, 7 evidence packets, all ok:true
+- Bridge docs: `s4a-slice-orchestrator/docs/PAPERCLIP_BRIDGE.md`
+- Paperclip commit: local only (39d60408), not pushed to upstream (paperclipai/paperclip)
+- No unrelated repos modified
+
+**Exit criteria:**
+- [x] Opt-in bridge route added to Paperclip behind env gate
+- [x] Bridge disabled by default — no behavior change (404 proven)
+- [x] createSlice works through Paperclip bridge
+- [x] getState works through Paperclip bridge
+- [x] Full lifecycle through bridge — **DRAFT→DEPLOYED, 7 commands, 7 evidence packets**
+- [x] Evidence packets still persist in orchestrator (7 packets)
+- [x] Bridge documented (docs/PAPERCLIP_BRIDGE.md)
+- [x] No unrelated repos modified

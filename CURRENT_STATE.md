@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 8B COMPLETE — Paperclip-ready wrapper with stdin/timeout/retry, all proven)
+Last updated: 2026-04-09 (Phase 9A COMPLETE — opt-in Paperclip bridge proven, full lifecycle through Paperclip HTTP)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
