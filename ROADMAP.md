@@ -269,11 +269,26 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - **Durability proven:** workflow started → paused at SCOPED → worker killed → worker restarted → state preserved (SCOPED) → signal sent → advanced to BUILDING → workflow completed with full transition history
 - Stale lifecycle wording fixed in project README.md and ROADMAP.md exit criteria
 
+**Phase 6C — Evidence packets, Cedar guards, approval gate (2026-04-09):**
+- CEO approved Phase 6C (evidence + Cedar + approval)
+- Evidence packets: JSON files persisted to `evidence/<sliceId>/` at every transition
+  - 9 required fields: sliceId, timestamp, fromState, toState, actor, decision, checksRun, result, notes
+  - 6 packets emitted in proof run, all persisted on disk
+- Cedar policy guards: `@cedar-policy/cedar-wasm` 4.9.1 (local WASM, no services)
+  - 5 policies in `policies/guards.cedar` guarding 5 transitions
+  - Cedar schema in `policies/schema.cedarschema`
+  - Evaluated as Temporal activity before each guarded transition
+- Human approval gate: workflow pauses at AWAITING_APPROVAL until explicit `approve` signal
+  - Cedar policy `approval_required` enforces `approvalGranted=true` before APPROVED
+  - Proven: workflow blocked at AWAITING_APPROVAL, advanced only after signal
+- Workflow extended: DRAFT → SCOPED → BUILDING → REVIEWING → VERIFYING → AWAITING_APPROVAL → APPROVED
+- New signals: reportTests, reportReview, approve
+
 **Exit criteria:**
 - [x] State machine formally specified in TLA+ and checked by Apalache
-- [~] Core Temporal workflow running locally with slice lifecycle — **partial: DRAFT → SCOPED → BUILDING proven with durability, full 12-state path deferred**
-- [ ] Cedar policies enforce at least 3 transition guards
-- [ ] Evidence packet emitted at each state transition
-- [ ] Human approval gate verified for at least one risky transition
+- [~] Core Temporal workflow running locally with slice lifecycle — **7 of 12 states implemented (through APPROVED), DEPLOYED and failure paths deferred**
+- [x] Cedar policies enforce at least 3 transition guards — **5 policies guard 5 transitions**
+- [x] Evidence packet emitted at each state transition — **6 packets in proof run**
+- [x] Human approval gate verified for at least one risky transition — **AWAITING_APPROVAL → APPROVED**
 - [ ] Retry/rollback paths tested
 - [ ] Integration with existing delivery pipeline documented

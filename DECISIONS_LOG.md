@@ -184,3 +184,9 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 **Decision:** Install Temporal CLI 1.6.2 (`~/.temporalio/bin/temporal`) for local development. The CLI bundles a lightweight dev server (`temporal server start-dev`) that runs an in-memory or SQLite-backed Temporal server locally — no Docker, no cloud, no subscription. Used to prove durable workflow execution for the slice orchestrator.
 **Rationale:** Phase 6B requires a running Temporal server to prove workflow durability (pause/resume across worker restarts). The CLI dev server is the lightest-weight local option. It is free, open-source, and requires no external services.
 **Authorship:** CEO-directed (Phase 6B approval), CTO-executed
+
+### DEC-025: Cedar WASM for local policy evaluation in slice orchestrator
+**Date:** 2026-04-09
+**Decision:** Use `@cedar-policy/cedar-wasm` (v4.9.1) for Cedar policy evaluation in the slice orchestrator. This is a WebAssembly build of the Cedar policy engine that runs directly in Node.js — no external service, no server, no cloud dependency. Policies are stored as `.cedar` files in the project's `policies/` directory and evaluated as Temporal activities before each guarded transition. Five policies guard five transitions in the approved state machine.
+**Rationale:** DEC-022 specifies Cedar for declarative policy checks. The WASM build is the simplest local integration path — it requires only an npm dependency, no separate Cedar server or service. Policies are human-readable, version-controlled, and auditable.
+**Authorship:** CEO-directed (Phase 6C approval), CTO-executed
