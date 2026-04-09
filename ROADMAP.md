@@ -347,3 +347,14 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - [x] Adapter contract documented for external callers — **docs/ADAPTER_CONTRACT.md**
 - [x] Builder-agent reporting path documented (signal contract) — **reportTests/reportReview in contract**
 - [x] No external repos modified — **confirmed**
+
+**Phase 7B — Task-envelope harness (2026-04-09):**
+- CEO approved Phase 7B (envelope contract + harness)
+- Architecture refactor: extracted `adapter-core.ts` as shared logic
+- `src/harness.ts`: envelope-based CLI — validates versioned envelopes, routes to adapter core
+- Request envelope: `{version, requestId, command, payload, caller, timestamp}`
+- Response envelope: `{ok, version, requestId, command, data?, error?, timestamp}`
+- Agent reporting: builder agents (opencode, claude-code) and reviewers (codex) call through same contract
+- `docs/ENVELOPE_CONTRACT.md`: full specification with agent examples
+- Proof: full lifecycle driven entirely through harness (7 commands, 7 evidence packets, all versioned envelopes)
+- No external repos modified

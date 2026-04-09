@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 7A IN PROGRESS — local control-plane adapter shim proven)
+Last updated: 2026-04-09 (Phase 7B COMPLETE — envelope harness + adapter shim proven, all Phase 7 exit criteria met)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
