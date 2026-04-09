@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 5 COMPLETE — all 4/4 exit criteria met, Phase 6 planned but blocked)
+Last updated: 2026-04-09 (Phase 6A IN PROGRESS — repo scaffolded, TLA+ spec written, awaiting model checking)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -183,6 +183,7 @@ See DEC-016 for the formal separation policy.
 | ~/projects/HRM | HRM project | local | Confirmed |
 | ~/projects/s4a-factory-dashboard | Phase 4 pilot — factory status dashboard | yosiwizman/s4a-factory-dashboard | Confirmed |
 | ~/projects/s4a-service-snapshot-cli | Phase 5C — factory snapshot CLI | yosiwizman/s4a-service-snapshot-cli | Confirmed |
+| ~/projects/s4a-slice-orchestrator | Phase 6 — slice orchestration backend (spec-first) | yosiwizman/s4a-slice-orchestrator | Confirmed |
 | ~/ai-env | Python virtualenv (not a project repo) | n/a | Confirmed |
 | ~/claude-desktop-debian | Claude Desktop .deb build scripts | local | Confirmed |
 | ~/.openclaw/workspace | OpenClaw managed workspace | local | Confirmed |

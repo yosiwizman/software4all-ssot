@@ -228,7 +228,19 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 **Intake:** `reports/phase6-slice-orchestrator-intake.md`
 **MVP plan:** `reports/phase6-slice-orchestrator-mvp-plan.md`
-**Repo (planned):** `~/projects/s4a-slice-orchestrator`
+**Repo:** `~/projects/s4a-slice-orchestrator` (created, pushed to github.com/yosiwizman/s4a-slice-orchestrator)
+
+**Phase 6A — Formal specification (2026-04-09):**
+- CEO scope approval granted for Phase 6A (spec-first only)
+- Repo scaffolded from `templates/project-repo/` (TEMPLATE_USAGE.md excluded)
+- TLA+ formal state machine specification written: `spec/tla/SliceMachine.tla`
+  - 12 states modeled (expanded from original 8 to include SCOPED, VERIFYING, AWAITING_APPROVAL, APPROVED, RETRY_PENDING)
+  - 16 transitions with explicit guards
+  - 6 checked invariants + structural invariants
+  - Model-checking config: `spec/tla/MC.tla`, `spec/tla/MC.cfg`
+  - Operator docs: `spec/tla/README.md`
+- **Blocker:** Apalache and TLC not installed locally. Java is available. Model checking deferred to Phase 6B preparation.
+- No runtime code, no infrastructure changes, no package installs
 
 **Exit criteria:**
 - [ ] State machine formally specified in TLA+ and checked by Apalache
