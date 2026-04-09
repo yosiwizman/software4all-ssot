@@ -190,3 +190,9 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 **Decision:** Use `@cedar-policy/cedar-wasm` (v4.9.1) for Cedar policy evaluation in the slice orchestrator. This is a WebAssembly build of the Cedar policy engine that runs directly in Node.js — no external service, no server, no cloud dependency. Policies are stored as `.cedar` files in the project's `policies/` directory and evaluated as Temporal activities before each guarded transition. Five policies guard five transitions in the approved state machine.
 **Rationale:** DEC-022 specifies Cedar for declarative policy checks. The WASM build is the simplest local integration path — it requires only an npm dependency, no separate Cedar server or service. Policies are human-readable, version-controlled, and auditable.
 **Authorship:** CEO-directed (Phase 6C approval), CTO-executed
+
+### DEC-026: Adapter-shim-first approach for control-plane integration
+**Date:** 2026-04-09
+**Decision:** Integrate the slice orchestrator with the factory control plane via a local CLI adapter shim, not by modifying the Paperclip repo directly. The adapter accepts structured JSON commands (argv), routes them to the existing Temporal client/signal layer, and returns structured JSON to stdout. Paperclip (or any control plane) invokes the adapter as a subprocess. This keeps the integration boundary clean and avoids coupling the orchestrator's internals to Paperclip's codebase.
+**Rationale:** Direct Paperclip modification risks breaking the upstream dependency and couples the orchestrator to a specific control-plane version. An adapter shim provides a stable contract that any caller can use — Paperclip today, a different orchestrator tomorrow. The CLI/JSON contract is the simplest machine-friendly integration path that requires no new services.
+**Authorship:** CEO-directed (Phase 7 approval), CTO-executed

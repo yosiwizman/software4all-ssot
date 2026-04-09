@@ -306,3 +306,44 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - [x] Human approval gate verified for at least one risky transition — **AWAITING_APPROVAL → APPROVED**
 - [x] Retry/rollback paths tested — **BLOCKED→SCOPED retry proven, ANY→ROLLED_BACK proven**
 - [x] Integration with existing delivery pipeline documented — **DELIVERY_PIPELINE.md updated**
+
+---
+
+## Phase 7: Control-Plane Integration
+
+**Goal:** Connect the proven slice orchestrator to the factory control plane safely, starting with a local adapter shim that external orchestrators (eventually Paperclip) can call.
+
+**Why a new phase:** Phase 6 built and proved the orchestrator in isolation. Phase 7 makes it callable by external systems without modifying those systems directly.
+
+**Approach — adapter-shim-first (DEC-026):**
+- Build a local CLI adapter that accepts structured JSON commands and returns structured JSON responses
+- The adapter wraps the existing Temporal client/signal paths — no new runtime logic
+- Paperclip (or any control plane) can invoke the adapter as a subprocess
+- No direct Paperclip repo modifications — the adapter is the integration boundary
+- No HTTP server unless explicitly needed later
+
+**Relationship to existing factory:**
+- The adapter sits between the control plane and the orchestrator
+- It does not replace Paperclip — it provides a contract Paperclip can call
+- Builder agents report via the same adapter contract (signals routed through it)
+
+**Repo:** `~/projects/s4a-slice-orchestrator` (same repo — adapter is part of the orchestrator)
+
+**Phase 7A — Adapter shim implementation (2026-04-09):**
+- CEO approved Phase 7A (adapter shim only)
+- `src/adapter.ts`: single CLI entrypoint, 10 commands, JSON in/out
+- `docs/ADAPTER_CONTRACT.md`: full contract spec for external callers
+- Contract: `node dist/adapter.js <command> '<json>'` → JSON stdout
+- Proof: full lifecycle (DRAFT → DEPLOYED) driven entirely through adapter
+  - 7 commands, 7 evidence packets, all `ok: true`
+  - No manual signal.js or client.js used
+- Builder-agent reporting path documented (reportTests/reportReview via adapter)
+- No external repos modified (DEC-026 constraint satisfied)
+
+**Exit criteria:**
+- [x] Local adapter CLI accepts all orchestrator commands via structured JSON — **10 commands implemented**
+- [x] Adapter returns machine-friendly JSON output for every command — **{ok, command, data} format**
+- [x] At least one end-to-end lifecycle driven entirely through the adapter — **DRAFT → DEPLOYED proven**
+- [x] Adapter contract documented for external callers — **docs/ADAPTER_CONTRACT.md**
+- [x] Builder-agent reporting path documented (signal contract) — **reportTests/reportReview in contract**
+- [x] No external repos modified — **confirmed**
