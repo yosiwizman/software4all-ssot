@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 2A — runtime completion partial)
+Last updated: 2026-04-09 (Phase 2 — runtime completion)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -69,7 +69,7 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | tmux | 3.4 | Confirmed |
 | sqlite3 | 3.45.1 | Confirmed |
 | VS Code | 1.114.0 | Confirmed |
-| Docker | not installed | Missing — requires sudo to install |
+| Docker | 29.1.3 (docker.io) | Confirmed |
 | uv | 0.11.6 | Confirmed |
 
 ## Browsers
@@ -113,7 +113,7 @@ See DEC-016 for the formal separation policy.
 | No secrets manager tool | Medium | Policy baseline set. No centralized tool yet. sops+age recommended for later phase. |
 | Duplicate AKIOR repos | Low | ~/akior and ~/projects/akior may both exist. Need consolidation. |
 | pnpm/bun path overlap | Low | Both installed; standard defined (pnpm for packages, bun for runtime only). |
-| Docker missing | Medium | Container runtime not available for isolated builds. |
+| ~~Docker missing~~ | ~~Medium~~ | **Resolved** — Docker 29.1.3 installed, user in docker group, `hello-world` verified. |
 
 ## What is working
 
@@ -130,6 +130,7 @@ See DEC-016 for the formal separation policy.
 - RustDesk remote access active
 - All TCP services bound to localhost (no external exposure)
 - uv Python package manager operational
+- Docker operational (29.1.3, hello-world verified)
 - SSOT repo committed and pushed to GitHub
 
 ## CUDA / cuDNN audit (2026-04-09)
@@ -153,10 +154,23 @@ See DEC-016 for the formal separation policy.
 - **Recommendation:** Defer CUDA toolkit upgrade until a specific project requires CUDA 13.x features. The current 12.0 toolkit works with the 580.x driver for compilation and most workloads. Ollama already bundles its own CUDA 13 runtime internally.
 - **cuDNN:** Install system cuDNN only when a project requires training or custom inference outside Ollama. Match cuDNN version to whichever CUDA toolkit is active at that time.
 
+## GPU routing rules (DEC-018)
+
+| GPU | Card | VRAM | Role | Constraints |
+|-----|------|------|------|-------------|
+| GPU0 | RTX PRO 6000 Blackwell | 96 GB | Primary compute / inference | Default target for Ollama, training, and heavy inference. No display attached. |
+| GPU1 | RTX 3090 | 24 GB | Secondary compute / overflow | Overflow from GPU0 when model won't fit, or parallel workloads. No display attached. |
+| GPU2 | RTX 4060 Ti | 16 GB | Display + light compute | Desktop display attached (1.4 GB baseline). Avoid heavy compute — reserve headroom for GUI responsiveness. |
+
+**Ollama default:** Ollama auto-selects GPUs based on model size. No manual `CUDA_VISIBLE_DEVICES` override needed unless a conflict arises. GPU0 is the natural primary target due to 96 GB VRAM.
+
+**Docker GPU access:** Use `--gpus` flag (e.g., `docker run --gpus all` or `--gpus '"device=0,1"'`). NVIDIA Container Toolkit installation deferred until a containerized GPU workload is needed.
+
+**Scheduling:** No formal GPU scheduler is installed. Current workload (Ollama inference only) does not require one. Revisit if multi-tenant GPU contention becomes an issue.
+
 ## What is not yet verified
 
-- GPU multi-device routing and scheduling
-- Ollama model loading across GPU1/GPU2
+- Ollama model loading across GPU1/GPU2 under real workloads
 - Full delivery pipeline end-to-end
 - Automated testing in pipeline
 - Backup and restore procedures

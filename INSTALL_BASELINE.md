@@ -45,14 +45,11 @@ These tools are present, verified, and approved for use.
 | UFW | 0.36.2-6 | Firewall — active, deny incoming, allow outgoing, enabled on startup |
 | RustDesk | 1.3.8 | Standard remote access (DEC-014) |
 | uv | 0.11.6 | Python package/project manager (standard per DEC-007) |
+| Docker | 29.1.3 | Container runtime (docker.io package). User in docker group. |
 
 ## Required next installs
 
-Install these in the order listed. Each is a prerequisite for the factory to function fully.
-
-| Priority | Tool | Reason | Install method |
-|----------|------|--------|----------------|
-| 1 | **Docker** | Container runtime for isolated builds. Many projects require it. | `sudo apt install docker.io && sudo usermod -aG docker $USER` (requires sudo + re-login) |
+No blocking installs remaining. All priority tools are installed.
 
 ## Install later (not blocking)
 

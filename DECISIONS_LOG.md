@@ -113,3 +113,14 @@ Format: `### DEC-NNN: Title` with date, decision, rationale, and authorship.
 **Decision:** CUDA toolkit upgrade (12.0 → 13.x) and system-level cuDNN installation are deferred until a specific project requires them. The current CUDA 12.0 toolkit remains functional. Ollama bundles its own CUDA 13 + cuDNN 9.20.0 runtime internally, so local inference is not affected.
 **Rationale:** The installed CUDA 12.0 came from Ubuntu's `nvidia-cuda-toolkit` package. Upgrading to 13.x requires adding NVIDIA's official apt repo, which may conflict with Ubuntu's packages and risk destabilizing the driver (580.126.09). No current project requires CUDA 13.x features. The risk/reward ratio does not justify the upgrade now.
 **Authorship:** CTO-executed
+
+### DEC-018: GPU routing rules — conservative baseline
+**Date:** 2026-04-09
+**Decision:** Establish conservative GPU role assignments based on verified hardware state:
+- **GPU0 (RTX PRO 6000 Blackwell, 96 GB):** Primary compute and inference target. Default for Ollama and any ML workloads. No display attached.
+- **GPU1 (RTX 3090, 24 GB):** Secondary compute. Used for overflow when GPU0 is full or for parallel workloads. No display attached.
+- **GPU2 (RTX 4060 Ti, 16 GB):** Display GPU (desktop attached, ~1.4 GB baseline usage). Reserve for GUI responsiveness. Avoid heavy compute workloads.
+
+No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects based on model size. NVIDIA Container Toolkit deferred until a containerized GPU workload is needed. No GPU scheduler installed; revisit if multi-tenant contention arises.
+**Rationale:** GPU0's 96 GB VRAM naturally absorbs all current inference models. GPU2 has the desktop display attached (confirmed via `nvidia-smi display_active=Enabled`), making it unsuitable as a primary compute target without risking UI stutter. This is a conservative baseline — routing can be tightened later when real multi-GPU workloads reveal actual contention patterns.
+**Authorship:** CTO-executed

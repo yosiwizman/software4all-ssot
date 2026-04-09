@@ -58,18 +58,18 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 **Progress (2026-04-09):**
 - uv v0.11.6 installed and verified
 - CUDA/cuDNN audit completed — CUDA 12.0 toolkit functional, upgrade to 13.x deferred (not trivial, no project currently requires it). Ollama bundles its own CUDA 13 + cuDNN 9.20 internally.
-- Docker blocked on sudo access — CEO must run install commands
+- Docker 29.1.3 installed by CEO, verified (`hello-world` passed)
+- GPU routing rules documented (DEC-018) — GPU0 primary compute, GPU1 overflow, GPU2 display-reserved
 
 **Remaining:**
-- Docker install requires sudo: `sudo apt install docker.io && sudo usermod -aG docker $USER` then re-login
-- GPU routing rules not yet documented
+- Verify all agents in AGENT_ROLE_MATRIX.md have working runtimes (spot check)
 
 **Exit criteria:**
-- [ ] Docker installed and `docker run hello-world` succeeds — **BLOCKED: requires sudo**
+- [x] Docker installed and `docker run hello-world` succeeds (v29.1.3)
 - [x] `uv --version` succeeds (v0.11.6)
 - [x] CUDA/cuDNN status audited and documented (upgrade deferred by recommendation, see CURRENT_STATE.md)
 - [ ] All agents in AGENT_ROLE_MATRIX.md have working runtimes
-- [ ] GPU routing rules documented
+- [x] GPU routing rules documented (DEC-018, see CURRENT_STATE.md)
 
 ---
 
