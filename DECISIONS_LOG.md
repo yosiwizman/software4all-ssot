@@ -168,3 +168,13 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 
 **Rationale:** The factory currently enforces delivery discipline by convention — agents read CLAUDE.md and follow written rules. This is fragile. A programmatic enforcement layer ensures every slice flows through a verified path: no skipped reviews, no silent transitions, no risky actions without approval. Temporal provides durability and retry. Cedar provides auditable policies. TLA+ catches design errors before they become code bugs.
 **Authorship:** CEO-directed
+
+### DEC-023: Phase 6A verification tooling + repo privacy correction
+**Date:** 2026-04-09
+**Decision:** Three operational decisions for Phase 6A completion:
+1. **Repo visibility:** s4a-slice-orchestrator changed from PUBLIC to PRIVATE on GitHub. Backend infrastructure repos should not be public by default.
+2. **Java upgrade:** OpenJDK upgraded from 8 to 17.0.18 (Ubuntu `openjdk-17-jre-headless` package). Required by Apalache model checker. Java 17 is now the default `java` on PATH.
+3. **TLA+ verification tools installed:** TLC 2.19 (`~/tools/tlaplus/tla2tools.jar`) and Apalache 0.56.1 (`~/tools/apalache/`). Both are free, open-source, local-only. No services, no subscriptions, no cloud. Used for formal verification of the slice state machine as required by DEC-022.
+
+**Rationale:** DEC-022 requires TLA+ model checking before implementation code. CEO approved local-only verification tooling install for this purpose. Repo privacy corrected because this is internal factory infrastructure, not a public project.
+**Authorship:** CEO-directed (tool install approval), CTO-executed (installation and verification)

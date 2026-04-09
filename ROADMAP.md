@@ -239,11 +239,21 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
   - 6 checked invariants + structural invariants
   - Model-checking config: `spec/tla/MC.tla`, `spec/tla/MC.cfg`
   - Operator docs: `spec/tla/README.md`
-- **Blocker:** Apalache and TLC not installed locally. Java is available. Model checking deferred to Phase 6B preparation.
 - No runtime code, no infrastructure changes, no package installs
 
+**Phase 6A — Verification completion (2026-04-09):**
+- CEO approved local verification tooling install
+- OpenJDK upgraded from 8 to 17.0.18 (Ubuntu repos, required by Apalache)
+- TLC 2.19 installed at `~/tools/tlaplus/tla2tools.jar`
+- Apalache 0.56.1 installed at `~/tools/apalache/`
+- Spec fixes for model checking: MC.tla syntax, Apalache type annotations, state constraint for bounded checking, terminal state stuttering
+- TLC result: 4,886 states generated, 2,061 distinct, depth 37, **zero violations**
+- Apalache result: bounded model checking to depth 10, **EXITCODE: OK, NoError**
+- Both tools independently confirm all 6 invariants hold
+- Repo visibility corrected from PUBLIC to PRIVATE (DEC-023)
+
 **Exit criteria:**
-- [ ] State machine formally specified in TLA+ and checked by Apalache
+- [x] State machine formally specified in TLA+ and checked by Apalache
 - [ ] Core Temporal workflow running locally with slice lifecycle (DRAFT → READY → BUILDING → REVIEWING → DONE)
 - [ ] Cedar policies enforce at least 3 transition guards
 - [ ] Evidence packet emitted at each state transition

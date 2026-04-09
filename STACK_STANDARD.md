@@ -56,6 +56,16 @@ Paperclip orchestrates agent execution — it assigns tasks, manages state durin
 | pip | Legacy installs only, prefer uv | Not for new project setup |
 | npm | Only when pnpm is incompatible | Not as default |
 
+## Verification tools — approved for Phase 6+ formal verification
+
+| Tool | Version | Role | Notes |
+|------|---------|------|-------|
+| TLC | 2.19 | TLA+ exhaustive model checker | `~/tools/tlaplus/tla2tools.jar`, requires Java 17+ |
+| Apalache | 0.56.1 | TLA+ bounded model checker (symbolic) | `~/tools/apalache/`, requires Java 17+ |
+| OpenJDK | 17.0.18 | Java runtime for TLC and Apalache | Ubuntu `openjdk-17-jre-headless` |
+
+These tools are approved for formal specification verification (DEC-022, DEC-023). They are local-only, free, open-source, no services.
+
 ## Not approved — do not add to main workflow
 
 | Tool | Reason |
