@@ -178,3 +178,9 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 
 **Rationale:** DEC-022 requires TLA+ model checking before implementation code. CEO approved local-only verification tooling install for this purpose. Repo privacy corrected because this is internal factory infrastructure, not a public project.
 **Authorship:** CEO-directed (tool install approval), CTO-executed (installation and verification)
+
+### DEC-024: Temporal CLI installed for Phase 6B durable execution spine
+**Date:** 2026-04-09
+**Decision:** Install Temporal CLI 1.6.2 (`~/.temporalio/bin/temporal`) for local development. The CLI bundles a lightweight dev server (`temporal server start-dev`) that runs an in-memory or SQLite-backed Temporal server locally — no Docker, no cloud, no subscription. Used to prove durable workflow execution for the slice orchestrator.
+**Rationale:** Phase 6B requires a running Temporal server to prove workflow durability (pause/resume across worker restarts). The CLI dev server is the lightest-weight local option. It is free, open-source, and requires no external services.
+**Authorship:** CEO-directed (Phase 6B approval), CTO-executed

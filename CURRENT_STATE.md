@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 6A COMPLETE — TLA+ spec model-checked by TLC + Apalache, zero violations)
+Last updated: 2026-04-09 (Phase 6B IN PROGRESS — Temporal durable spine proven, Codex review fixes applied)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -74,6 +74,7 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | Java (OpenJDK) | 17.0.18 | Confirmed — upgraded from 8 for Apalache |
 | TLC (TLA+ model checker) | 2.19 | Confirmed — ~/tools/tlaplus/tla2tools.jar |
 | Apalache (TLA+ model checker) | 0.56.1 | Confirmed — ~/tools/apalache/ |
+| Temporal CLI | 1.6.2 (Server 1.30.2) | Confirmed — ~/.temporalio/bin/temporal |
 
 ## Browsers
 

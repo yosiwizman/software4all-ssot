@@ -252,9 +252,26 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Both tools independently confirm all 6 invariants hold
 - Repo visibility corrected from PUBLIC to PRIVATE (DEC-023)
 
+**Phase 6B — Durable execution spine (2026-04-09):**
+- CEO approved Phase 6B (Codex review + minimal Temporal spine)
+- Codex review of TLA+ spec: 1 P0, 3 P1, 4 P2 findings
+  - P0 fixed: removed dead `rollbackComplete` variable
+  - P1 fixed: DRAFT/SCOPED added to rollback set
+  - P1 fixed: retryCount reset on BlockedToScoped
+  - P1 deferred: testsPass invariant for DEPLOYED (vacuously true)
+  - P2s deferred (VERIFYING failure path, approval rejection, coupled test/commit, comment-only invariants)
+  - Re-verified: TLC 5,849 states / 2,321 distinct / zero violations; Apalache OK
+- Temporal CLI 1.6.2 installed (`~/.temporalio/bin/temporal`)
+- TypeScript Temporal workflow implemented: `sliceWorkflow` (DRAFT → SCOPED → BUILDING)
+  - Signal-based pause at SCOPED (assignBuilder signal)
+  - Query handlers: getState, getHistory
+  - @temporalio/workflow 1.15.0
+- **Durability proven:** workflow started → paused at SCOPED → worker killed → worker restarted → state preserved (SCOPED) → signal sent → advanced to BUILDING → workflow completed with full transition history
+- Stale lifecycle wording fixed in project README.md and ROADMAP.md exit criteria
+
 **Exit criteria:**
 - [x] State machine formally specified in TLA+ and checked by Apalache
-- [ ] Core Temporal workflow running locally with slice lifecycle (DRAFT → READY → BUILDING → REVIEWING → DONE)
+- [~] Core Temporal workflow running locally with slice lifecycle — **partial: DRAFT → SCOPED → BUILDING proven with durability, full 12-state path deferred**
 - [ ] Cedar policies enforce at least 3 transition guards
 - [ ] Evidence packet emitted at each state transition
 - [ ] Human approval gate verified for at least one risky transition
