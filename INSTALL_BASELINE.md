@@ -42,6 +42,8 @@ These tools are present, verified, and approved for use.
 | VS Code | 1.114.0 | Standard IDE |
 | Chrome | installed | Browser |
 | Firefox | installed | Browser |
+| UFW | 0.36.2-6 | Firewall — installed, needs sudo to verify/configure (see SECURITY_BASELINE.md) |
+| RustDesk | 1.3.8 | Standard remote access (DEC-014) |
 
 ## Required next installs
 
@@ -53,7 +55,6 @@ Install these in the order listed. Each is a prerequisite for the factory to fun
 | 2 | **uv** | Python package/project manager. Replaces pip for new projects. | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 | 3 | **CUDA toolkit upgrade** | Current 12.0 should match driver's 13.0 capability. | Follow NVIDIA's official Ubuntu 24.04 repo instructions |
 | 4 | **cuDNN** | Required for ML model training and some inference workloads. | Install after CUDA upgrade, matching CUDA version |
-| 5 | **UFW (firewall)** | May be installed but not configured. Must be active. | `sudo ufw enable` + configure rules per SECURITY_BASELINE.md |
 
 ## Install later (not blocking)
 

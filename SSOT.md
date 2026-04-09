@@ -68,7 +68,7 @@ When specific events happen, update the corresponding canonical file immediately
 | Agent role or authority changed | AGENT_ROLE_MATRIX.md |
 | Tool approved or removed from stack | STACK_STANDARD.md and DECISIONS_LOG.md |
 
-**After any update:** Commit with a descriptive message and push. Do not let the repo drift from reality.
+**After any update:** Commit with a descriptive message and push directly to `main`. This repo uses direct-push flow, not feature branches/PRs (see DEC-013). Do not let the repo drift from reality.
 
 ## Truth hierarchy (within this repo)
 

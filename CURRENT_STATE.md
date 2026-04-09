@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (CTO correction pass)
+Last updated: 2026-04-09 (Phase 1 security baseline)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -80,18 +80,28 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | Firefox | Confirmed |
 | Playwright | Confirmed — project-local in Paperclip node_modules |
 
+## Security posture
+
+| Item | Value | Status |
+|------|-------|--------|
+| UFW (firewall) | Installed (v0.36.2-6) but status unverified — requires sudo | Risk — needs CEO to run `sudo ufw status` and configure |
+| RustDesk | v1.3.8 active (service + server + tray) | Confirmed — chosen as standard remote access |
+| GNOME Remote Desktop | System service active, RDP disabled, no credentials set | Confirmed — effectively inactive, not a risk |
+| Port 3000 | Was exposed (Jarvis dev-proxy on 0.0.0.0) — process killed | Confirmed resolved — no auto-restart mechanism found |
+| Port 3002 | Nothing listening | Confirmed — no service on this port |
+| Externally-reachable TCP | None after port 3000 fix | Confirmed — all TCP listeners now localhost-only |
+| Secrets management | Policy-only baseline — gitignore enforcement, no centralized tool yet | Confirmed — sops+age recommended for future |
+
 ## Known risks
 
 | Risk | Severity | Details |
 |------|----------|---------|
-| Ports 3000/3002 exposed | High | Were exposed to network; source services unknown. Need firewall. |
-| No firewall confirmed | High | UFW status not verified. |
+| UFW not configured | High | Installed but requires sudo to verify/configure. CEO action needed. See SECURITY_BASELINE.md. |
 | CUDA version mismatch | Medium | Toolkit 12.0 installed, driver supports 13.0. May limit model performance. |
 | cuDNN missing | Medium | Required for many ML workloads. |
-| No secrets manager | Medium | API keys and credentials have no centralized secure storage. |
+| No secrets manager tool | Medium | Policy baseline set. No centralized tool yet. sops+age recommended for later phase. |
 | Duplicate AKIOR repos | Low | ~/akior and ~/projects/akior may both exist. Need consolidation. |
-| Multiple remote access | Low | RustDesk and GNOME Remote Desktop may both be active. |
-| pnpm/bun path overlap | Low | Both installed; need clear standard for which is used when. |
+| pnpm/bun path overlap | Low | Both installed; standard defined (pnpm for packages, bun for runtime only). |
 | Docker missing | Medium | Container runtime not available for isolated builds. |
 
 ## What is working
@@ -100,17 +110,20 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 - OpenCode builds functional
 - Claude Code operational with hooks, guards, and oh-my-claudecode hardening
 - Codex available for review
-- OpenClaw gateway running
-- Ollama serving local models
+- OpenClaw gateway running (localhost-only on ports 18789/18791)
+- Ollama serving local models (localhost-only on port 11434)
 - Git/GitHub workflow functional
 - VS Code available
 - GPU0 (96GB) available for inference
+- RustDesk remote access active
+- All TCP services bound to localhost (no external exposure)
+- SSOT repo committed and pushed to GitHub
 
 ## What is not yet verified
 
+- UFW firewall status and rules (requires sudo)
 - GPU multi-device routing and scheduling
 - Ollama model loading across GPU1/GPU2
 - Full delivery pipeline end-to-end
 - Automated testing in pipeline
 - Backup and restore procedures
-- Network security posture

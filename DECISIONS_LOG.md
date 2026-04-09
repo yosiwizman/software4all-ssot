@@ -82,3 +82,22 @@ Format: `### DEC-NNN: Title` with date, decision, rationale, and authorship.
 **Decision:** oh-my-claudecode v4.11.4 installed via npm (`oh-my-claude-sisyphus`) and activated via `omc setup`. Adds 19 agent definitions and 37 skills to Claude Code. Existing Claude Code hooks preserved — OMC did not overwrite them.
 **Rationale:** Part of the approved target stack (see STACK_STANDARD.md). Provides multi-agent orchestration, token efficiency, and enhanced skills for the premium builder tier.
 **Authorship:** CTO-recommended, CEO-approved
+
+### DEC-013: SSOT repo branch policy
+**Date:** 2026-04-09
+**Decision:** The `software4all-ssot` repo allows direct pushes to `main` by approved operator flow. Feature branches and PRs are not required for SSOT updates.
+**Rationale:** This repo is the canonical operating system and documentation repo for Software 4 All, not a product engineering repo requiring PR-heavy workflow. Requiring feature branches/PR flow for every SSOT change adds friction and increases drift risk for a CEO-run system.
+**Enforcement note:** The global Claude Code branch-guard hook (`~/.claude/hooks/branch-guard.sh`) blocks pushes to `main` by default. For this repo, pushes use `CC_PROTECT_BRANCHES="none"` to override. This does not weaken protection for other repos — the override is applied per-push, not globally.
+**Authorship:** CTO-recommended, CEO-approved
+
+### DEC-014: RustDesk as standard remote access method
+**Date:** 2026-04-09
+**Decision:** RustDesk v1.3.8 is the standard remote access tool for ai-desktop. GNOME Remote Desktop is not actively used (RDP disabled, no credentials configured) and may remain installed but is not the standard path.
+**Rationale:** RustDesk is already active, encrypted, authenticated, and functional. GNOME Remote Desktop's system service is running but RDP is disabled — it poses no security risk but also provides no value. Standardizing on one tool simplifies security review and access control.
+**Authorship:** CTO-recommended, CEO-approved
+
+### DEC-015: Secrets management baseline — policy now, sops+age later
+**Date:** 2026-04-09
+**Decision:** Immediate baseline is policy-only: no secrets in git, use gitignored `.env` and credential files only. The recommended future tool is `sops + age` for encrypted secrets at rest, to be installed when a project requires centralized credential management.
+**Rationale:** No project currently requires a secrets manager tool. Installing one now would be premature. The policy baseline (gitignore enforcement, no secrets in checked-in files) is sufficient for current risk level. sops+age is lightweight, offline-capable, and fits the local-first model.
+**Authorship:** CTO-recommended, CEO-approved

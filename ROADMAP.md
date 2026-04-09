@@ -6,7 +6,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 0: SSOT Foundation
+## Phase 0: SSOT Foundation — COMPLETE
 
 **Goal:** Establish the canonical documentation and governance structure so all future work has a reference point.
 
@@ -18,13 +18,13 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Delivery pipeline documented
 
 **Exit criteria:**
-- [ ] All 11 required docs exist with substantive content
+- [x] All 11 required docs exist with substantive content
 - [ ] CEO has reviewed and approved the operating model
-- [ ] Repo is committed and pushed
+- [x] Repo is committed and pushed
 
 ---
 
-## Phase 1: Security and Machine Baseline
+## Phase 1: Security and Machine Baseline — IN PROGRESS
 
 **Goal:** Lock down the machine, close known gaps, establish security standards as enforceable practice.
 
@@ -36,11 +36,21 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Secrets management baseline established
 - CURRENT_STATE.md updated with confirmed security state
 
+**Progress (2026-04-09):**
+- Port 3000 exposure resolved (stale Jarvis dev-proxy killed, no auto-restart)
+- Port 3002 confirmed clear (nothing was listening)
+- All TCP services confirmed localhost-only
+- Remote access standardized on RustDesk (DEC-014)
+- Secrets management policy baseline set (DEC-015)
+- SSOT branch policy established (DEC-013)
+
+**Remaining blocker:** UFW firewall configuration requires sudo access. CEO must run the UFW commands documented in SECURITY_BASELINE.md.
+
 **Exit criteria:**
-- [ ] UFW active with explicit allow-list
-- [ ] No unexpected ports exposed to network
-- [ ] Single remote access method chosen and documented
-- [ ] Secrets management approach decided and logged in DECISIONS_LOG.md
+- [ ] UFW active with explicit allow-list — **BLOCKED: requires sudo**
+- [x] No unexpected ports exposed to network
+- [x] Single remote access method chosen and documented
+- [x] Secrets management approach decided and logged in DECISIONS_LOG.md
 
 ---
 
@@ -53,7 +63,6 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - uv installed and verified
 - CUDA toolkit upgraded to match driver (12.x → 13.0-compatible)
 - cuDNN installed
-- oh-my-claudecode installed and verified
 - GPU routing rules documented
 - CURRENT_STATE.md and INSTALL_BASELINE.md updated
 
