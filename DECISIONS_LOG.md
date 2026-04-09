@@ -124,3 +124,13 @@ Format: `### DEC-NNN: Title` with date, decision, rationale, and authorship.
 No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects based on model size. NVIDIA Container Toolkit deferred until a containerized GPU workload is needed. No GPU scheduler installed; revisit if multi-tenant contention arises.
 **Rationale:** GPU0's 96 GB VRAM naturally absorbs all current inference models. GPU2 has the desktop display attached (confirmed via `nvidia-smi display_active=Enabled`), making it unsuitable as a primary compute target without risking UI stutter. This is a conservative baseline — routing can be tightened later when real multi-GPU workloads reveal actual contention patterns.
 **Authorship:** CTO-executed
+
+### DEC-019: Phase 3A standardization audit — workspace and tooling baseline
+**Date:** 2026-04-09
+**Decision:** Establish workspace and tooling conventions based on verified audit:
+1. **Workspace layout:** New project repos go in `~/projects/`. Only governance repos (SSOT, akior-governance) and upstream dependencies (paperclip) live at top-level.
+2. **AKIOR repos are distinct, not duplicates:** `~/akior` (akior-governance — ledger/governance) and `~/projects/akior` (AKIOR_AUOTONOMUS_ASSISTENT — application code) serve different purposes and have separate GitHub remotes. No consolidation needed.
+3. **pnpm install method:** pnpm is installed via npm global (`~/.npm-global/bin/pnpm`). Corepack 0.34.6 is present but not managing pnpm. This is acceptable — no migration to corepack required unless a specific benefit is identified.
+4. **Paperclip invocation:** No `paperclip` CLI binary exists in PATH. Control plane runs via `pnpm dev` from `~/paperclip`. CLI available as `pnpm paperclipai` within the repo. Ports 3100 and 13100 (both localhost-only).
+**Rationale:** Phase 3 requires documenting reality before prescribing changes. This audit corrects the prior assumption that AKIOR repos were duplicates, clarifies Paperclip naming ambiguity, and establishes directory conventions to prevent workspace sprawl.
+**Authorship:** CTO-executed

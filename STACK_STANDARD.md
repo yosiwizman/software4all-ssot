@@ -24,7 +24,7 @@ These are the core tools that make up the factory. All are approved for daily us
 | Category | Standard | Notes |
 |----------|----------|-------|
 | IDE | VS Code | All agents and humans use VS Code as standard |
-| JS package manager | pnpm | Not npm, not yarn, not bun (bun allowed only as runtime, not package manager) |
+| JS package manager | pnpm | Not npm, not yarn, not bun (bun allowed only as runtime, not package manager). Installed via npm global (~/.npm-global/bin/pnpm). Corepack is present but not used to manage pnpm. |
 | Python package manager | uv | Once installed. Replaces pip for project dependency management. |
 | Container runtime | Docker | Once installed. Standard for isolated builds and deployments. |
 | Version control | git + GitHub (gh CLI) | All repos on GitHub. gh for PR/issue workflows. |
@@ -67,3 +67,18 @@ Paperclip orchestrates agent execution — it assigns tasks, manages state durin
 | Extra inference servers | Ollama is sufficient unless explicitly approved |
 
 Adding any tool from this list requires a DECISIONS_LOG.md entry with rationale and CEO approval.
+
+---
+
+## Workspace directory conventions
+
+All work lives under `/home/ai-desktop`. Project repos go in `~/projects/`. Top-level exceptions exist for historically established repos.
+
+| Location | Convention |
+|----------|-----------|
+| `~/software4all-ssot` | SSOT repo — top-level, not in ~/projects (governance, not a project) |
+| `~/paperclip` | Paperclip control plane — top-level (upstream dependency, not an S4A project) |
+| `~/projects/<name>` | Standard location for all S4A project repos |
+| `~/akior` | AKIOR governance repo — top-level (historical, governance-focused) |
+
+**Rule:** New project repos go in `~/projects/`. Only governance or upstream-dependency repos live at top-level, and only if they are already established there. Do not create new top-level repos without justification.

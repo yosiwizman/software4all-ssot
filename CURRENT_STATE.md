@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 2 COMPLETE — all exit criteria met)
+Last updated: 2026-04-09 (Phase 3 IN PROGRESS — standardization audit started)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -97,6 +97,7 @@ This file tracks the actual state of the machine and ecosystem. Update this file
 | Port | Owner project | Service | Status |
 |------|--------------|---------|--------|
 | 3100 | Software 4 All / Paperclip | Control plane local entrypoint | Confirmed — localhost-only |
+| 13100 | Software 4 All / Paperclip | Secondary Paperclip listener (same node process as :3100) | Confirmed — localhost-only |
 | 3000 | Jarvis / AKIOR | Dev proxy (when running) | Not S4A — Jarvis project-specific, localhost-only |
 | 3001 | Jarvis / AKIOR | Next.js dev server (when running) | Not S4A — Jarvis project-specific, localhost-only |
 | 3002 | Jarvis / AKIOR | Reserved for Jarvis dev use | Not S4A — currently unused |
@@ -111,8 +112,8 @@ See DEC-016 for the formal separation policy.
 | CUDA version mismatch | Medium | Toolkit 12.0.140 (Ubuntu pkg) vs driver 13.0 capability. Upgrade requires NVIDIA repo, not trivial. See CUDA audit notes below. |
 | cuDNN missing (system) | Medium | Ollama bundles cuDNN 9.20.0 internally. System-wide cuDNN for custom ML workloads not installed. |
 | No secrets manager tool | Medium | Policy baseline set. No centralized tool yet. sops+age recommended for later phase. |
-| Duplicate AKIOR repos | Low | ~/akior and ~/projects/akior may both exist. Need consolidation. |
-| pnpm/bun path overlap | Low | Both installed; standard defined (pnpm for packages, bun for runtime only). |
+| AKIOR multi-repo ambiguity | Low | ~/akior (akior-governance — ledger/governance) and ~/projects/akior (AKIOR_AUOTONOMUS_ASSISTENT — application code) are distinct repos, not duplicates. Naming makes purpose unclear at a glance. See Phase 3A audit. |
+| pnpm install method | Low | pnpm installed via npm global (~/.npm-global/bin/pnpm), not corepack. Corepack 0.34.6 is present but unused. Not a problem, but worth noting for future upgrades. |
 | ~~Docker missing~~ | ~~Medium~~ | **Resolved** — Docker 29.1.3 installed, user in docker group, `hello-world` verified. |
 
 ## What is working
@@ -168,6 +169,22 @@ See DEC-016 for the formal separation policy.
 **Docker GPU access:** Use `--gpus` flag (e.g., `docker run --gpus all` or `--gpus '"device=0,1"'`). NVIDIA Container Toolkit installation deferred until a containerized GPU workload is needed.
 
 **Scheduling:** No formal GPU scheduler is installed. Current workload (Ollama inference only) does not require one. Revisit if multi-tenant GPU contention becomes an issue.
+
+## Workspace structure (Phase 3A audit, 2026-04-09)
+
+| Path | Purpose | Git remote | Status |
+|------|---------|------------|--------|
+| ~/software4all-ssot | SSOT repo (this repo) | yosiwizman/software4all-ssot | Confirmed |
+| ~/paperclip | Paperclip control plane (pnpm monorepo) | upstream Paperclip | Confirmed |
+| ~/akior | AKIOR governance & ledger repo | yosiwizman/akior-governance | Confirmed |
+| ~/projects/akior | AKIOR application code | yosiwizman/AKIOR_AUOTONOMUS_ASSISTENT | Confirmed |
+| ~/projects/ai-desktop-health | Machine health monitoring | local | Confirmed |
+| ~/projects/HRM | HRM project | local | Confirmed |
+| ~/ai-env | Python virtualenv (not a project repo) | n/a | Confirmed |
+| ~/claude-desktop-debian | Claude Desktop .deb build scripts | local | Confirmed |
+| ~/.openclaw/workspace | OpenClaw managed workspace | local | Confirmed |
+
+**Paperclip runtime detail:** No `paperclip` CLI binary is installed globally. The control plane runs via `pnpm dev` from `~/paperclip`, which invokes tsx on `src/index.ts` in the `@paperclipai/server` package. The CLI is available as `pnpm paperclipai` from within the repo. Listens on ports 3100 and 13100 (both localhost-only, same node process).
 
 ## What is not yet verified
 

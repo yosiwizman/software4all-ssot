@@ -70,7 +70,7 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 
 ---
 
-## Phase 3: Standardization
+## Phase 3: Standardization — IN PROGRESS
 
 **Goal:** Ensure consistent project structure, repo conventions, and workspace organization.
 
@@ -82,11 +82,19 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Git branching and commit conventions documented
 - CI/lint baseline defined (even if not yet automated)
 
+**Progress (Phase 3A — 2026-04-09):**
+- Workspace audit completed — all repos catalogued in CURRENT_STATE.md
+- AKIOR "duplicate" repos investigated — found to be two distinct repos (governance vs application), not duplicates. Risk entry corrected.
+- pnpm install path documented (npm global, not corepack). Bun confirmed runtime-only (no global installs).
+- Paperclip runtime/CLI naming clarified — no global binary, runs via `pnpm dev`, CLI via `pnpm paperclipai`.
+- Undocumented port 13100 (Paperclip secondary listener) added to port ownership table.
+- Workspace directory conventions added to STACK_STANDARD.md.
+
 **Exit criteria:**
 - [ ] Project template exists and is usable
-- [ ] No duplicate repos for same project
-- [ ] Package manager paths are clean and unambiguous
-- [ ] Conventions documented in this repo
+- [x] No duplicate repos for same project (verified — ~/akior and ~/projects/akior are distinct repos with different remotes and purposes)
+- [x] Package manager paths are clean and unambiguous (pnpm via npm global, bun runtime-only, no conflicts)
+- [x] Conventions documented in this repo (workspace conventions in STACK_STANDARD.md, workspace structure in CURRENT_STATE.md)
 
 ---
 
