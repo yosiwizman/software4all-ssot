@@ -1,0 +1,23 @@
+# Claude Code local overrides
+CLAUDE.local.md
+.claude/*.local.*
+
+# Agent runtime state
+.omc/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/settings.json
+
+# Secrets (should never be in this repo)
+*.env
+*.key
+*.pem
+credentials.*
+secrets.*
