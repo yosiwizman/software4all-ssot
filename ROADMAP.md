@@ -358,3 +358,34 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - `docs/ENVELOPE_CONTRACT.md`: full specification with agent examples
 - Proof: full lifecycle driven entirely through harness (7 commands, 7 evidence packets, all versioned envelopes)
 - No external repos modified
+
+---
+
+## Phase 8: External-Caller Hardening
+
+**Goal:** Make the orchestrator's control-plane interface production-grade for external callers — agents, control planes, scripts — without touching any external repo.
+
+**Phase 8A — Subprocess-grade caller pack (2026-04-09):**
+- CEO approved Phase 8A (harness hardening + agent helpers + subprocess proof)
+- Harness hardened: `errorCode` field on all error responses for machine classification
+  - Error codes: INVALID_JSON, ENVELOPE_VALIDATION, UNKNOWN_COMMAND, MISSING_FIELD, CONNECTION_FAILED, WORKFLOW_ERROR, INTERNAL_ERROR
+  - stderr suppressed (stdout always clean parseable JSON)
+  - Exit codes: 0 = success, 1 = structured error
+- Agent helper scripts (`bin/`): create-slice.sh, get-state.sh, report-tests.sh, report-review.sh
+  - Auto-build envelopes, call harness via subprocess
+  - Default callers: paperclip, opencode, codex
+- Envelope examples (`examples/`): 6 ready-to-copy JSON files
+- Subprocess proof: 10 tests via child_process.execSync, ALL PASS
+  - Full lifecycle DRAFT→DEPLOYED through subprocess
+  - Invalid JSON → structured INVALID_JSON error
+  - Unknown command → structured UNKNOWN_COMMAND error
+  - 7 evidence packets persisted
+- No external repos modified
+
+**Exit criteria:**
+- [x] Harness returns structured error envelopes with errorCode for all failure modes
+- [x] Agent helper scripts for builder/reviewer reporting
+- [x] Subprocess-grade proof (child_process.execSync) for full lifecycle + errors
+- [x] Envelope examples for common commands
+- [x] Documentation updated with error handling, exit codes, subprocess pattern
+- [x] No external repos modified
