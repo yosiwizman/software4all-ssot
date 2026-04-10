@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-10 (Phase 25 FULLY CLOSED — auto-refresh polling proven for both workflow status and list)
+Last updated: 2026-04-10 (Phase 26 COMPLETE — upstream audit: no clean upstreamable subset exists, fork-only confirmed)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 

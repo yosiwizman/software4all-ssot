@@ -214,3 +214,15 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 
 **Rationale:** DEC-002 prohibits forking Paperclip to avoid maintenance burden and divergence risk. The bridge work (DEC-027) requires local Paperclip commits that cannot be pushed upstream yet. A protection fork is the narrowest safe way to preserve this work without violating the spirit of DEC-002 — it is temporary, scoped to one branch, and explicitly scheduled for removal.
 **Authorship:** CEO-directed (Phase 9B closure approval), CTO-executed
+
+### DEC-029: Paperclip bridge changes are fork-only — no upstream PR
+**Date:** 2026-04-10
+**Decision:** After formal upstream-readiness audit (Phase 26), the S4A orchestrator bridge changes in the Paperclip fork are classified as **fork-only**. No upstream PR will be submitted because:
+1. All 17 changed files are tightly coupled to the external `s4a-slice-orchestrator` subprocess — not a general-purpose Paperclip feature.
+2. UI and backend hardcode S4A-specific naming (`S4A Slice Inspector`, `opencode`, `claude-code`).
+3. The bridge pattern (subprocess envelope POST) does not fit Paperclip's existing plugin architecture.
+4. The correct upstream path, if ever needed, would be a Paperclip plugin — not hardcoded routes.
+
+The fork (`yosiwizman/paperclip`, branch `s4a-orchestrator-bridge`) continues under DEC-028 rules. DEC-002 remains in force: Paperclip is not forked as the product strategy.
+**Rationale:** Submitting S4A-specific internal tooling as an upstream PR would likely be rejected and would leak company-specific operator patterns into a public open-source project. Keeping this fork-only is the correct boundary.
+**Authorship:** CTO-executed (Phase 26 audit finding)

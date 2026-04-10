@@ -806,3 +806,27 @@ All lifecycle primitives formalized with helpers and smoke proofs:
   - Terminal: polling stops after DEPLOYED (PASS)
 - Paperclip commit: 87a5e658 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 26: Upstream-Readiness Audit
+
+**Goal:** Determine whether Paperclip fork changes can be submitted upstream.
+
+**Phase 26 — Upstream audit (2026-04-10):**
+- **Result: NO clean upstreamable subset exists.** All changes remain fork-only.
+
+- Audit: 20 commits, 17 S4A-specific files, 2,315 lines added
+- Classification:
+  - **Fork-only (all 17 files):**
+    - Backend route/service: tightly coupled to external `s4a-slice-orchestrator` subprocess — not a general-purpose Paperclip feature
+    - UI page/API: hardcoded S4A naming, `opencode`/`claude-code` builder references, company-specific operator console
+    - Scripts (10 files): internal S4A-specific operator helpers
+    - Docs: internal S4A bridge documentation with DEC-028 references
+  - **No upstream-safe subset:** the bridge pattern could theoretically become a plugin, but that requires Paperclip plugin API design — far beyond cherry-picking
+  - **Upstream path (deferred):** if the orchestrator integration should go upstream, it should be built as a Paperclip plugin, not hardcoded routes
+
+- DEC-002 (no Paperclip fork) remains in force via DEC-028 (temporary protection fork only)
+- No upstream PR opened — would be rejected as too S4A-specific
+- No code changes in this phase
+- Upstream paperclipai/paperclip NOT modified
