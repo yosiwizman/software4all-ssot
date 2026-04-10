@@ -830,3 +830,41 @@ All lifecycle primitives formalized with helpers and smoke proofs:
 - No upstream PR opened — would be rejected as too S4A-specific
 - No code changes in this phase
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 29: S4A port-boundary correction + localhost lock documentation
+
+**Goal:** Correct `SECURITY_BASELINE.md` so it no longer frames Jarvis-owned ports as S4A-managed and so the S4A canonical localhost endpoint is stated unambiguously. Doc-only. Boundary-only. No runtime changes.
+
+**Phase 29 — S4A port boundary (2026-04-10):**
+- **Jarvis ownership of 3000–3002 confirmed from Jarvis source code** (read-only):
+  - `projects/akior/forge/jarvis-v5-os/apps/web/dev-proxy-http.mjs:5-6,44` — Jarvis front-door proxy listening on `3000` and routing to Next.js on `3001` and API on `3002`
+  - `projects/akior/forge/jarvis-v5-os/apps/web/package.json:6` — `next dev -p 3001`
+  - `projects/akior/forge/jarvis-v5-os/apps/web/next.config.mjs:20-21` — Jarvis Fastify backend at `http://localhost:3002`
+- **S4A / Paperclip ownership of 3100 confirmed from Paperclip source** (read-only):
+  - `paperclip/server/src/config.ts:230-231` — default `host = 127.0.0.1`, default `port = 3100`
+  - `paperclip/server/src/app.ts` — `bindHost` plumbed through with `privateHostnameGuard` middleware
+- **DEC-016** already formalizes the runtime port ownership table (3100 = S4A; 3000–3002 = Jarvis). Phase 29 does not add a new decision — it removes stale S4A-scoped wording that implied otherwise.
+- **Stale wording corrected in `SECURITY_BASELINE.md`:**
+  - "Core principle" — now explicitly S4A-scoped
+  - New "Scope boundary (Phase 29)" paragraph makes 3000–3002 out-of-scope for S4A
+  - "Firewall → Required rules" — removed the "(3000, 3002, 8080, etc.)" list that implied S4A manages those ports; replaced with S4A-owned listeners plus a line clarifying non-S4A ports are owned by their own project
+  - "Exposed port policy → Resolved (2026-04-09)" — reframed as a Jarvis-scope historical note, not S4A remediation
+  - "Current known security concerns" — 3000/3002 row relabeled as `Out of scope (DEC-016)` instead of `Resolved`
+- `CURRENT_STATE.md` header updated to reflect Phase 29 completion (the port ownership table inside CURRENT_STATE was already correct per DEC-016 and is unchanged).
+- No new DEC entry — DEC-016 already covers this boundary; a second decision would be redundant.
+- **Deferred separately (out of Phase 29 scope):** RustDesk policy review, UFW rule re-verification with sudo, GNOME Remote Desktop daemon status documentation. These are tracked for a future phase.
+
+**Files changed:**
+- `SECURITY_BASELINE.md` — core principle, firewall standard, exposed port policy, known concerns row
+- `CURRENT_STATE.md` — header date
+- `ROADMAP.md` — this section
+
+**Not changed:**
+- Paperclip runtime and source (already correct)
+- Slice orchestrator (no listeners)
+- Jarvis source (out of scope — read-only inspection only)
+- DEC-016 (unchanged)
+
+**Outcome:** SSOT now cleanly separates S4A-owned network surface (canonical `localhost:3100`) from Jarvis-owned ports (3000–3002). S4A hardening doctrine applies only to S4A.

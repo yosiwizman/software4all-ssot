@@ -6,7 +6,9 @@ Minimum security standards for the ai-desktop machine and the software factory. 
 
 ## Core principle
 
-**Localhost-first.** All dev services bind to 127.0.0.1 by default. Nothing is exposed to the network unless explicitly approved and documented.
+**Localhost-first.** All Software 4 All / Paperclip services bind to 127.0.0.1 by default. Nothing S4A-owned is exposed to the network unless explicitly approved and documented.
+
+**Scope boundary (Phase 29).** This baseline governs **Software 4 All / Paperclip** services only. Other projects on this machine (notably **Jarvis / AKIOR**) own their own ports and runtime. Specifically, **ports 3000–3002 are Jarvis-owned** (see DEC-016 and the runtime port ownership table below) and are **out of scope** for S4A hardening, remediation, or firewall decisions made under this file. S4A tooling must not bind to, reassign, or "fix" those ports. The canonical S4A local control-plane endpoint is `localhost:3100`.
 
 ---
 
@@ -14,11 +16,12 @@ Minimum security standards for the ai-desktop machine and the software factory. 
 
 **Standard:** UFW must be active with a default-deny incoming policy.
 
-**Required rules:**
+**Required rules (S4A scope):**
 - Default: deny incoming, allow outgoing
 - SSH (port 22): allow from trusted IPs only, or disable if not needed
-- All dev services (3000, 3002, 8080, etc.): localhost only unless explicitly opened
-- Ollama API: localhost only (127.0.0.1:11434)
+- S4A control plane (`127.0.0.1:3100`, Paperclip) and S4A auxiliary listeners: localhost only
+- Ollama API: localhost only (`127.0.0.1:11434`)
+- Non-S4A project ports (e.g. Jarvis on 3000–3002) are governed by their own project, not this file
 
 **Current status (2026-04-09):** UFW is active and enabled on system startup.
 - Default: deny incoming, allow outgoing
@@ -36,10 +39,11 @@ No service may listen on 0.0.0.0 (all interfaces) unless:
 3. CEO has approved the exposure
 4. Firewall rules limit access to specific IPs if possible
 
-**Resolved (2026-04-09):**
-- **Port 3000** was a Jarvis V5 OS `dev-proxy-http.mjs` (node) bound to `0.0.0.0`. It was a stale dev process, not a production service. Process killed. No auto-restart mechanism found (no systemd service, no cron).
-- **Port 3002** had nothing listening. The original concern is cleared.
-- **Current state:** All TCP services are now bound to localhost only. No externally-reachable TCP listeners remain.
+**Historical note (2026-04-09, Jarvis scope — not S4A remediation):**
+- **Port 3000** was observed bound to `0.0.0.0` via Jarvis V5 OS `dev-proxy-http.mjs` (see `projects/akior/forge/jarvis-v5-os/apps/web/dev-proxy-http.mjs:44`). This is an intentional Jarvis dev tool — a front-door proxy that routes to Jarvis Next.js (3001) and Jarvis Fastify API (3002). The listener was stopped on 2026-04-09. It is **owned by Jarvis**, not S4A, and any future handling of this port is a Jarvis decision, not an S4A action.
+- **Port 3002** had nothing listening at the time of the audit. Per `next.config.mjs:21` it is the Jarvis Fastify backend port; Jarvis-owned.
+- **Phase 29 clarification:** the 2026-04-09 event is recorded here for history only. S4A does not manage, remediate, or hold policy over ports 3000–3002. See DEC-016 and the scope boundary under "Core principle."
+- **Current S4A state:** all S4A TCP services are bound to localhost only. S4A canonical endpoint is `127.0.0.1:3100`.
 
 ## Runtime port ownership (DEC-016)
 
@@ -152,7 +156,7 @@ This machine hosts multiple projects. Port ownership prevents cross-project conf
 
 | Concern | Severity | Status | Action needed |
 |---------|----------|--------|---------------|
-| Ports 3000/3002 exposed to network | ~~High~~ | **Resolved** | Port 3000 process killed, port 3002 was clear. All TCP now localhost-only. |
+| Ports 3000/3002 exposed to network (Jarvis-owned, not S4A) | ~~High~~ | **Out of scope (DEC-016)** | Ports are Jarvis-owned per `dev-proxy-http.mjs`/`next.config.mjs`. S4A neither remediates nor manages them. Phase 29 clarified the boundary. |
 | UFW not confirmed active | ~~High~~ | **Resolved** | Active, deny incoming, allow outgoing, enabled on startup. |
 | No secrets manager tool | Medium | Policy set | sops+age recommended for future. Policy enforcement sufficient for now. |
 | Multiple remote access tools | ~~Medium~~ | **Resolved** | RustDesk chosen as standard (DEC-014). GNOME RD inactive. |
