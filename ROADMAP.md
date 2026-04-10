@@ -786,3 +786,23 @@ All lifecycle primitives formalized with helpers and smoke proofs:
   - UI: inspector + workflow list work under default-on
 - Paperclip commit: ff3a9d85 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 25: Auto-Refresh Polling
+
+**Goal:** Keep the Slice Inspector current without manual refresh clicks.
+
+**Phase 25 — Auto-refresh polling (2026-04-10):**
+- Selected workflow: polls getStatus + getHistory every 5 seconds
+- Workflow list: polls listWorkflows every 15 seconds
+- Pauses during mutations (acting flag via ref)
+- Stops for terminal states (DEPLOYED, ROLLED_BACK)
+- UI: "Auto-refresh · HH:MM:SS" indicator (hidden for terminal states)
+- No backend changes — existing queries sufficient
+- Browser proof:
+  - Live update: external API change auto-reflected in UI (PASS)
+  - Mutation safety: Approve during polling succeeds (PASS)
+  - Terminal: polling stops after DEPLOYED (PASS)
+- Paperclip commit: 87a5e658 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
