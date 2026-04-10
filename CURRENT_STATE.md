@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 19 COMPLETE — rollback formalized, full control-plane surface complete)
+Last updated: 2026-04-10 (Phase 20 COMPLETE — read-only Slice Inspector UI in Paperclip)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 

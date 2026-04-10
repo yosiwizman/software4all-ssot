@@ -680,3 +680,26 @@ All lifecycle primitives formalized with helpers and smoke proofs:
 - Happy path: createSlice → assignBuilder → reportTests → reportReview → approve → deploy → DEPLOYED
 - Failure: reportTests(fail) → BLOCKED → retry/policy-route/escalate → reassign
 - Terminal: rollback → ROLLED_BACK
+
+---
+
+## Phase 20: Slice Inspector UI
+
+**Goal:** Add a read-only slice inspector page inside the Paperclip UI for viewing orchestrator state.
+
+**Phase 20 — Slice Inspector UI (2026-04-10):**
+- Read-only inspector page at `/instance/settings/s4a-slices`
+- Manual workflowId input → fetches and displays:
+  - State (color-coded badge)
+  - Builder agent ID
+  - Build fail count
+  - Full transition history table with Cedar decision badges
+- Frontend: `ui/src/pages/SliceInspector.tsx` + `ui/src/api/s4a.ts`
+- Route: mounted under `instance/settings` (company-independent)
+- Existing `getStatus` and `getHistory` queries sufficient — no new orchestrator code
+- No new backend code — uses existing `/api/s4a-orchestrator` POST route
+- No new env gate — page always renders, bridge must be enabled for data
+- Data flow verified: getStatus → {state, builderAgentId, buildFailCount}, getHistory → transitions
+- Existing lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: 0d69842f pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
