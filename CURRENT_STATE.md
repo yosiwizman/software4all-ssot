@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-10 (Phase 27 COMPLETE — persistent evidence store audit: file-based is sufficient, upgrade deferred per DEC-030)
+Last updated: 2026-04-10 (Phase 29 COMPLETE — S4A port-boundary clarification: 3000–3002 are Jarvis-owned and out of scope for S4A hardening; S4A canonical endpoint remains `localhost:3100`. Phase 27 audit and DEC-030 unchanged.)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
