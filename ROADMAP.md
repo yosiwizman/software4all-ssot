@@ -767,3 +767,22 @@ All lifecycle primitives formalized with helpers and smoke proofs:
 - UI proof: both workflows in Recent Workflows, click to switch, correct status/actions for each
 - Paperclip commit: 8a56be7a (docs only) pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 24: Default-On Bridge
+
+**Goal:** Remove operational friction by making the S4A bridge enabled by default.
+
+**Phase 24 — Default-on bridge (2026-04-10):**
+- One-line change: `enabled: process.env.S4A_ORCHESTRATOR_BRIDGE !== "0"` (was `=== "1"`)
+- Old: required `S4A_ORCHESTRATOR_BRIDGE=1` to enable (default: disabled)
+- New: **enabled by default**, set `S4A_ORCHESTRATOR_BRIDGE=0` to disable
+- Security: route remains localhost-only (127.0.0.1:3100), no new exposure
+- Proofs:
+  - Default-on: bridge works without any env var (log confirms, listWorkflows OK, UI loads)
+  - Opt-out: `S4A_ORCHESTRATOR_BRIDGE=0` → 404 (bridge disabled)
+  - Localhost-only: confirmed via `ss -tlnp`
+  - UI: inspector + workflow list work under default-on
+- Paperclip commit: ff3a9d85 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified

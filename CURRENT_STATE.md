@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-10 (Phase 23 COMPLETE — multi-slice concurrency proven with full isolation)
+Last updated: 2026-04-10 (Phase 24 COMPLETE — S4A bridge default-on, opt-out via S4A_ORCHESTRATOR_BRIDGE=0)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
