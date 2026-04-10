@@ -652,3 +652,31 @@ All happy-path pipeline stages have dedicated Paperclip-side helpers and smoke p
 - Orchestrator commit: 8164f25 pushed to github.com/yosiwizman/s4a-slice-orchestrator
 - Paperclip commit: 91b12c43 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 19: Rollback Formalization
+
+**Goal:** Formalize the terminal rollback path through the Paperclip bridge.
+
+**Phase 19 — Rollback formalization (2026-04-09):**
+- Existing `rollback` command already supported by orchestrator (Phase 6D) and generic bridge
+- No new env gate needed — uses `S4A_ORCHESTRATOR_BRIDGE=1` only
+- No new orchestrator code
+- Added: convenience helper `server/scripts/s4a-rollback.sh`
+- Added: dedicated smoke proof with evidence check + terminal behavior verification
+- Supported source states: SCOPED, BUILDING, REVIEWING, VERIFYING, AWAITING_APPROVAL, APPROVED, BLOCKED, RETRY_PENDING, FAILED
+- NOT supported from: DRAFT, DEPLOYED, ROLLED_BACK
+- State transition proven: BUILDING → ROLLED_BACK (terminal)
+- Evidence: rollback evidence packet persisted
+- Terminal behavior proven: assignBuilder rejected after rollback (ok=false)
+- Smoke proofs: rollback (4/4 PASS)
+- Existing happy-path lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: 30b9b2ad pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
+
+**Full Paperclip-bridge control-plane surface now complete:**
+All lifecycle primitives formalized with helpers and smoke proofs:
+- Happy path: createSlice → assignBuilder → reportTests → reportReview → approve → deploy → DEPLOYED
+- Failure: reportTests(fail) → BLOCKED → retry/policy-route/escalate → reassign
+- Terminal: rollback → ROLLED_BACK

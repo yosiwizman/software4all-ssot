@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 18 COMPLETE — policy-aware builder routing with durable buildFailCount tracking)
+Last updated: 2026-04-09 (Phase 19 COMPLETE — rollback formalized, full control-plane surface complete)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
