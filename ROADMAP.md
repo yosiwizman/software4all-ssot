@@ -721,3 +721,29 @@ All lifecycle primitives formalized with helpers and smoke proofs:
   7 transitions, all ALLOW, zero errors
 - Paperclip commit: 64386c57 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 22: Workflow Listing
+
+**Goal:** Add workflow discovery to the Slice Inspector — list recent workflows instead of requiring manual ID entry.
+
+**Phase 22 — Workflow listing (2026-04-10):**
+- "Recent Workflows" panel on the inspector page
+  - Auto-loads on page open via `listWorkflows` command
+  - Shows: workflowId, status (RUNNING/COMPLETED), start date
+  - Click a row to load status + history + action controls
+  - Up to 20 workflows, scrollable, refresh button
+  - New workflows appear after Create
+- Orchestrator: added `listWorkflows` command in adapter-core
+  - Queries Temporal `client.workflow.list()` for sliceWorkflow type
+  - Returns `[{workflowId, status, startTime, closeTime}]`, max 50
+  - Added to harness VALID_COMMANDS
+- No new env gate
+- Browser proof (Playwright against production build):
+  - 20 workflows listed with status badges
+  - Click selection loads status + history + action buttons
+  - All proofs PASS
+- Orchestrator commit: dca2426 pushed to github.com/yosiwizman/s4a-slice-orchestrator
+- Paperclip commit: 7348b289 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified

@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-10 (Phase 21 FULLY CLOSED — all UI actions browser-proven including BLOCKED retry/rollback)
+Last updated: 2026-04-10 (Phase 22 COMPLETE — workflow listing in Slice Inspector, browser-proven)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
