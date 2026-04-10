@@ -830,3 +830,69 @@ All lifecycle primitives formalized with helpers and smoke proofs:
 - No upstream PR opened — would be rejected as too S4A-specific
 - No code changes in this phase
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 27: Persistent Evidence Store — Readiness Audit
+
+**Goal:** Determine whether the file-based evidence system needs to be upgraded to a persistent store (e.g. SQLite) now, or whether deferral remains correct.
+
+**Phase 27 — Evidence store audit (2026-04-10):**
+- **Result: file-based evidence is still sufficient. Upgrade deferred per DEC-030.**
+
+**Current evidence model (verified from code):**
+- Writer: `src/activities/evidence.ts` → `emitEvidencePacket()` — one Temporal activity
+- Called from: `src/workflows/sliceWorkflow.ts:115` via `emitTransition()` — exactly one call site
+- Path: `<orchestrator>/evidence/<sliceId>/<ISO-timestamp>_<from>_<to>.json`
+- Write path: `fs.mkdirSync(..., {recursive:true})` + `fs.writeFileSync(...)` — single-shot, append-only, no updates
+- Packet shape: 9 fields (sliceId, timestamp, fromState, toState, actor, decision, checksRun, result, notes) — small JSON
+- Retention: none — files are never cleaned up
+
+**Current consumers (verified from code — grep across orchestrator + Paperclip):**
+- Runtime consumers: **ZERO.** No command, no API, no UI reads the evidence directory at runtime.
+- `getState`, `getStatus`, `getHistory`, `listWorkflows` all read from Temporal workflow queries, not files. `history` is an in-workflow `TransitionRecord[]` array served by `getHistoryQuery` — independent of the files.
+- Paperclip bridge, UI (`ui/src/api/s4a.ts`, `SliceInspector.tsx`), and all operator scripts go through the Temporal path — they never touch the filesystem.
+- Only file readers: `src/proof-wrapper.ts:160` and `src/proof-subprocess.ts:178` — offline test/proof scripts that count packets. NOT on the runtime path.
+
+**Observed scale (verified from disk):**
+- 50 slice directories, 265 JSON files total
+- 86 KB raw JSON, 1.3 MB directory (mostly filesystem overhead)
+- Average packet size: 325 bytes
+- No concurrent-write collisions possible: unique per `(sliceId, ISO-timestamp, from_to)` path
+
+**Audit findings — actual problems today:**
+| Concern | Status |
+|---------|--------|
+| Lookup speed | Irrelevant — zero runtime lookups |
+| Concurrency collisions | None — per-slice subdir, per-transition unique filename |
+| Missing indexing | No feature needs an index |
+| Retention/cleanup difficulty | Negligible — 86 KB after all proof runs combined |
+| Data integrity | Append-only, single writeFileSync — safe |
+| Disk growth | 4 orders of magnitude of headroom |
+
+**Deferral decision: file-based is sufficient now.**
+The original Phase 6 plan (`reports/phase6-slice-orchestrator-mvp-plan.md:182`) scheduled the upgrade for "when audit trail querying is needed." No such feature exists in the roadmap or in current operator workflows. Building a persistent index now would be premature architecture.
+
+**Future trigger conditions (any one is sufficient to revisit):**
+1. A concrete product feature requires cross-slice evidence queries (e.g. "DENY count per agent last 7d", "audit report for all rollbacks in a period", "feed evidence into a dashboard/BI tool").
+2. Evidence corpus exceeds ~100,000 files OR ~1 GB on disk (current: 265 files / 86 KB — 3–4 orders of magnitude of headroom).
+3. A compliance or legal retention policy is imposed (none currently).
+4. Evidence writes become concurrent-hot (>10 writes/sec sustained). Current rate is orders of magnitude lower.
+5. An external consumer (monitoring, SIEM, audit tool) needs a query API against evidence history.
+
+**Risks accepted by deferral:**
+- Cross-slice audit queries require ad-hoc `grep`/`jq` over the filesystem.
+- No automated retention — disk will grow linearly with workflow volume (negligible at current rate).
+- If a future feature needs evidence query, it will require the upgrade as a blocker at that time rather than as groundwork.
+
+**Unchanged-behavior proof:**
+- No code changes in this phase.
+- Paperclip HEAD: `87a5e658` (unchanged, matches fork HEAD on `s4a-orchestrator-bridge`).
+- Orchestrator HEAD: `dca2426` (unchanged).
+- Evidence directory intact: most recent dir (`list-refresh-proof-1775796231548`) contains packets from the prior Phase 25 browser proof run — existing lifecycle behavior preserved.
+
+**Upstream protection:**
+- Upstream `paperclipai/paperclip` master: `0e87fdbe` (unchanged, no `s4a-orchestrator-bridge` branch exists upstream).
+- No push to upstream occurred. No push to any Paperclip remote in this phase (no changes).
+
+**Outcome:** Phase 27 closed as "deferred — file-based sufficient." Formalized as DEC-030.

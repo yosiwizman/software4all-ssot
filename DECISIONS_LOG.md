@@ -226,3 +226,31 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 The fork (`yosiwizman/paperclip`, branch `s4a-orchestrator-bridge`) continues under DEC-028 rules. DEC-002 remains in force: Paperclip is not forked as the product strategy.
 **Rationale:** Submitting S4A-specific internal tooling as an upstream PR would likely be rejected and would leak company-specific operator patterns into a public open-source project. Keeping this fork-only is the correct boundary.
 **Authorship:** CTO-executed (Phase 26 audit finding)
+
+### DEC-030: Persistent evidence store upgrade deferred — file-based is sufficient
+**Date:** 2026-04-10
+**Decision:** After formal readiness audit (Phase 27), the persistent evidence store upgrade originally scheduled in the Phase 6 MVP plan is **deferred**. The current file-based evidence system (`evidence/<sliceId>/<timestamp>_<from>_<to>.json` written by `emitEvidencePacket` activity) remains in place unchanged.
+
+**Audit findings (2026-04-10):**
+1. Runtime consumers of the evidence directory: **zero.** All operator-facing state (`getState`, `getStatus`, `getHistory`, `listWorkflows`) is served from Temporal workflow queries and an in-workflow `TransitionRecord[]` array — not from files.
+2. The only code that reads the evidence directory is two offline proof/test scripts (`src/proof-wrapper.ts`, `src/proof-subprocess.ts`) — not on the runtime path.
+3. Current corpus: 50 slice directories, 265 files, 86 KB raw JSON total. Average packet size ~325 bytes.
+4. No collision risk (unique `(sliceId, timestamp, from_to)` path), no concurrent-write volume (<<1/s), no integrity risk (append-only single `writeFileSync`), no retention/compliance requirement.
+5. The original plan (`reports/phase6-slice-orchestrator-mvp-plan.md:182`) scheduled the upgrade "when audit trail querying is needed." No such feature exists in the current roadmap or operator workflow.
+
+**Trigger conditions (any one re-opens this decision):**
+1. A concrete product feature requires cross-slice evidence queries (DENY counts per agent, audit reports over date ranges, BI/dashboard feeds).
+2. Evidence corpus exceeds ~100,000 files OR ~1 GB on disk.
+3. A compliance or legal retention policy is imposed.
+4. Sustained evidence write rate exceeds ~10/sec.
+5. An external consumer (monitoring, SIEM, audit tooling) requires a query API.
+
+**Preferred upgrade path when triggered:** keep JSON files as source-of-truth, add a small local SQLite index (dual-write), no schema-breaking changes, no networked DB service, no command-semantics changes.
+
+**Risks accepted:**
+- Cross-slice audit queries today require ad-hoc `grep`/`jq` over the filesystem.
+- No automated retention — disk grows linearly with workflow volume (negligible at current rate).
+- If a future feature needs evidence querying, that feature will inherit this upgrade as a prerequisite at that time.
+
+**Rationale:** Building a persistent index today would be premature architecture. There is no feature, constraint, or symptom that would benefit from it. Deferring keeps the system simple, auditable, and reversible, and preserves the smallest-safe-change discipline.
+**Authorship:** CTO-executed (Phase 27 audit finding)
