@@ -582,3 +582,25 @@ All happy-path pipeline stages have dedicated Paperclip-side helpers and smoke p
 - Existing step-by-step lifecycle verified unchanged (10/10 PASS)
 - Paperclip commit: 7bd8b4c9 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 16: Failure-Path Recovery
+
+**Goal:** Formalize the canonical recovery primitive after a failed build/test report through the Paperclip bridge.
+
+**Phase 16 — Failure-path recovery (2026-04-09):**
+- Existing `retry` command already supported by the orchestrator (Phase 6D) and the generic bridge
+- No new env gate needed — uses `S4A_ORCHESTRATOR_BRIDGE=1` only
+- No new orchestrator code — retry signal and BLOCKED→SCOPED transition already implemented
+- Added: convenience helper `server/scripts/s4a-retry.sh`
+- Added: dedicated smoke proof for full fail→BLOCKED→retry→SCOPED→reassign flow
+- Recovery flow: `reportTests(fail) → BLOCKED → retry → SCOPED → assignBuilder → BUILDING`
+- State transitions proven:
+  - BUILDING → BLOCKED (Cedar DENY on failed tests)
+  - BLOCKED → SCOPED (retry: retryCount reset, builder cleared, tests cleared)
+  - Post-recovery: SCOPED → BUILDING (reassignment succeeds)
+- Smoke proofs: retry (4/4 PASS)
+- Existing happy-path lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: f5518f13 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
