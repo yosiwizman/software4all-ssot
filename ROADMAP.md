@@ -701,5 +701,23 @@ All lifecycle primitives formalized with helpers and smoke proofs:
 - No new env gate — page always renders, bridge must be enabled for data
 - Data flow verified: getStatus → {state, builderAgentId, buildFailCount}, getHistory → transitions
 - Existing lifecycle verified unchanged (10/10 PASS)
-- Paperclip commit: 0d69842f pushed to fork yosiwizman/paperclip
+- Paperclip commit: 0d69842f pushed to fork yosiwizman/paperclip (Phase 20)
+- Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 21: UI Mutation Controls
+
+**Goal:** Turn the read-only Slice Inspector into a minimal operator console with state-aware mutation buttons.
+
+**Phase 21 — UI mutation controls (2026-04-10):**
+- Extended inspector with: Create Slice, Assign Builder, Retry, Rollback, Approve, Deploy
+- State-gated: buttons visible only for valid states, terminal states show "no actions available"
+- Auto-refresh after mutations, inline success/error feedback
+- API module extended with 6 mutation commands — all via existing bridge POST route
+- No new backend code, no new orchestrator code, no new env gate
+- Browser proof (Playwright against production build):
+  Create → SCOPED → Assign(opencode) → BUILDING → (API) → AWAITING_APPROVAL → Approve → APPROVED → Deploy → DEPLOYED
+  7 transitions, all ALLOW, zero errors
+- Paperclip commit: 64386c57 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
