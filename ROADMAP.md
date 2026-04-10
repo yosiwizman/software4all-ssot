@@ -455,3 +455,23 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
   - Disabled mode: 404, 1 pass
   - Enabled mode: full lifecycle DRAFT→DEPLOYED, 10 passes, 7 evidence packets
 - Env-gated behavior verified unchanged after refactor
+
+---
+
+## Phase 10: Default-Builder Auto-Assign
+
+**Goal:** After a successful `createSlice` through the Paperclip bridge, automatically assign the factory's default builder (OpenCode) without requiring a separate manual `assignBuilder` call.
+
+**Phase 10 — Default-builder auto-assign (2026-04-09):**
+- CEO approved Phase 10 (default-builder auto-assign only)
+- Three-gate opt-in model:
+  1. `S4A_ORCHESTRATOR_BRIDGE=1` (bridge enabled)
+  2. `S4A_BRIDGE_AUTO_ASSIGN=1` (env gate)
+  3. `payload.autoAssign: true` (request-level opt-in)
+- Default builder: `opencode` (per AGENT_ROLE_MATRIX.md, DELIVERY_PIPELINE.md)
+- Implementation: `autoAssignAfterCreate()` in bridge service, called from route after successful createSlice
+- Response enriched with `autoAssign.{ok, agentId, state}` when fired
+- All three gates off by default — existing behavior unchanged
+- Smoke proof extended: autoassign-off (3/3), autoassign-on (4/4), autoassign-noop (3/3)
+- Paperclip commit: 60e820ab pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
