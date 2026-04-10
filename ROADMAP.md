@@ -475,3 +475,23 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Smoke proof extended: autoassign-off (3/3), autoassign-on (4/4), autoassign-noop (3/3)
 - Paperclip commit: 60e820ab pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 11: Build-Result Reporting
+
+**Goal:** Formalize the builder-agent test-result reporting path through the Paperclip bridge using the canonical `reportTests` command.
+
+**Phase 11 — Build-result reporting (2026-04-09):**
+- No new env gate needed — `reportTests` already supported by the generic bridge when `S4A_ORCHESTRATOR_BRIDGE=1`
+- No new route/service code — the existing bridge handles it generically
+- Added: convenience helper `server/scripts/s4a-report-tests.sh`
+- Added: dedicated smoke proofs for pass and fail paths
+- Canonical envelope: `{command:"reportTests", payload:{workflowId, pass:bool, commit:bool}, caller:"opencode"}`
+- State transitions proven:
+  - `pass:true` → BUILDING → REVIEWING (Cedar allows)
+  - `pass:false` → BUILDING → BLOCKED (Cedar denies BUILDING→REVIEWING)
+- Smoke proofs: report-pass (4/4 PASS), report-fail (4/4 PASS)
+- Existing lifecycle and auto-assign behavior verified unchanged (10/10 PASS)
+- Paperclip commit: e8eea0cd pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
