@@ -495,3 +495,24 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Existing lifecycle and auto-assign behavior verified unchanged (10/10 PASS)
 - Paperclip commit: e8eea0cd pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 12: Reviewer-Result Reporting
+
+**Goal:** Formalize the reviewer-agent review-result reporting path through the Paperclip bridge using the canonical `reportReview` command.
+
+**Phase 12 — Reviewer-result reporting (2026-04-09):**
+- No new env gate needed — `reportReview` already supported by the generic bridge when `S4A_ORCHESTRATOR_BRIDGE=1`
+- No new route/service code — the existing bridge handles it generically
+- Added: convenience helper `server/scripts/s4a-report-review.sh`
+- Added: dedicated smoke proofs for approve and reject paths
+- Canonical envelope: `{command:"reportReview", payload:{workflowId, approved:bool}, caller:"codex"}`
+- Canonical reviewer: `codex` (per AGENT_ROLE_MATRIX.md)
+- State transitions proven:
+  - `approved:true` → REVIEWING → VERIFYING → AWAITING_APPROVAL
+  - `approved:false` → stays in REVIEWING (awaiting new review)
+- Smoke proofs: review-approve (4/4 PASS), review-reject (4/4 PASS)
+- Existing lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: 8fdaca33 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
