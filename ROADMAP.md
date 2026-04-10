@@ -516,3 +516,22 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Existing lifecycle verified unchanged (10/10 PASS)
 - Paperclip commit: 8fdaca33 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 13: CEO Approval Formalization
+
+**Goal:** Formalize the CEO approval gate through the Paperclip bridge using the canonical `approve` command.
+
+**Phase 13 — CEO approval formalization (2026-04-09):**
+- No new env gate needed — `approve` already supported by the generic bridge when `S4A_ORCHESTRATOR_BRIDGE=1`
+- No new route/service code — the existing bridge handles it generically
+- Added: convenience helper `server/scripts/s4a-approve.sh`
+- Added: dedicated smoke proof for approval path
+- Canonical envelope: `{command:"approve", payload:{workflowId}, caller:"ceo"}`
+- Canonical caller: `ceo` (per AGENT_ROLE_MATRIX.md — CEO is final approver)
+- State transition proven: AWAITING_APPROVAL → APPROVED (Cedar `approval_required` policy)
+- Smoke proofs: approve (3/3 PASS)
+- Existing lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: 54a8d176 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
