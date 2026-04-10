@@ -564,3 +564,21 @@ All happy-path pipeline stages have dedicated Paperclip-side helpers and smoke p
 4. `reportReview` → AWAITING_APPROVAL or stays REVIEWING (Phase 12)
 5. `approve` → APPROVED (Phase 13)
 6. `deploy` → DEPLOYED (Phase 14)
+
+---
+
+## Phase 15: End-to-End Happy-Path Automation
+
+**Goal:** One script runs the complete slice lifecycle through the Paperclip bridge from createSlice to DEPLOYED.
+
+**Phase 15 — Chained happy-path automation (2026-04-09):**
+- No new env gate needed — uses `S4A_ORCHESTRATOR_BRIDGE=1` only
+- No new route/service code — uses explicit per-step bridge calls
+- Added: `server/scripts/s4a-happy-path.sh [description] [sliceId]`
+  - Runs: createSlice → assignBuilder(opencode) → reportTests(pass) → reportReview(approve) → approve → deploy
+  - Prints stage-by-stage PASS/FAIL + evidence summary
+- Smoke proof: `bash server/scripts/s4a-bridge-smoke.sh happy-path`
+- Proof result: 7/7 stages PASS, 7 evidence packets, DEPLOYED terminal state
+- Existing step-by-step lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: 7bd8b4c9 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
