@@ -604,3 +604,27 @@ All happy-path pipeline stages have dedicated Paperclip-side helpers and smoke p
 - Existing happy-path lifecycle verified unchanged (10/10 PASS)
 - Paperclip commit: f5518f13 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 17: Builder Escalation
+
+**Goal:** Formalize the escalation path from failed OpenCode build to Claude Code reassignment through the Paperclip bridge.
+
+**Phase 17 — Builder escalation (2026-04-09):**
+- Discovery: the orchestrator does NOT track cross-retry attempt counts. The "2 tries then Claude" policy (DEC-003) cannot be automatically enforced from current system state.
+- Implementation: explicit manual escalation helper — correct and useful without faking policy enforcement
+- No new env gate needed — uses existing bridge commands only
+- No new orchestrator code — uses existing `retry` + `assignBuilder`
+- Added: `server/scripts/s4a-escalate.sh <workflowId> [caller]`
+  - Checks BLOCKED state
+  - Issues retry → SCOPED
+  - Issues assignBuilder with `agentId: claude-code` → BUILDING
+  - Verifies result including builder identity from evidence
+- Escalation flow: `BUILDING(opencode) → reportTests(fail) → BLOCKED → escalate → retry → SCOPED → assignBuilder(claude-code) → BUILDING(claude-code)`
+- Builder identity proven from evidence packet: `actor: "claude-code"`
+- Smoke proofs: escalate (4/4 PASS)
+- Existing happy-path lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: ea94eb10 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
+- **Policy note:** Automatic "2 tries then Claude" enforcement deferred — requires orchestrator-side attempt tracking across retries
