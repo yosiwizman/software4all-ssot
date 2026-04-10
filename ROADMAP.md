@@ -442,3 +442,16 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - [x] Evidence packets still persist in orchestrator (7 packets)
 - [x] Bridge documented (docs/PAPERCLIP_BRIDGE.md)
 - [x] No unrelated repos modified
+
+**Phase 9B — Bridge stabilization (2026-04-09):**
+- CEO approved Phase 9B (stabilize + refactor + smoke proof)
+- Branch protection: `s4a-orchestrator-bridge` branch created in Paperclip
+- Fork created: `yosiwizman/paperclip` (GitHub fork of paperclipai/paperclip)
+- Bridge branch pushed to fork (NOT to upstream)
+- Refactored into route + service:
+  - `server/src/services/s4a-orchestrator-bridge.ts`: config resolution, subprocess execution, error builder
+  - `server/src/routes/s4a-orchestrator.ts`: thin POST handler, delegates to service
+- Repeatable smoke proof: `server/scripts/s4a-bridge-smoke.sh`
+  - Disabled mode: 404, 1 pass
+  - Enabled mode: full lifecycle DRAFT→DEPLOYED, 10 passes, 7 evidence packets
+- Env-gated behavior verified unchanged after refactor
