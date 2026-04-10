@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 9B COMPLETE — Paperclip bridge stabilized on fork branch, refactored, smoke-proven)
+Last updated: 2026-04-09 (Phase 9B CLOSED — bridge stabilized, fork governance resolved via DEC-028, docs complete)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 

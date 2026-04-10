@@ -202,3 +202,15 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 **Decision:** Add one Express route (`POST /api/s4a-orchestrator`) to the Paperclip server, gated behind `S4A_ORCHESTRATOR_BRIDGE=1` env var. When disabled (default), the route is not mounted and Paperclip behavior is unchanged. When enabled, the route accepts envelope JSON in the request body, spawns the orchestrator wrapper as a subprocess (stdin pipe), and returns the response envelope as JSON. The subprocess boundary (DEC-026) is retained — Paperclip never imports orchestrator code directly.
 **Rationale:** An opt-in Express route is the smallest safe integration surface that follows existing Paperclip patterns (route modules mounted in app.ts). The env gate ensures zero risk to default behavior. Subprocess invocation preserves the clean boundary from DEC-026 while making the orchestrator callable through Paperclip's HTTP interface.
 **Authorship:** CEO-directed (Phase 9 approval), CTO-executed
+
+### DEC-028: Temporary protection fork for Paperclip bridge work (narrows DEC-002)
+**Date:** 2026-04-09
+**Decision:** A user-owned GitHub fork (`yosiwizman/paperclip`) is authorized as a temporary protection remote for the `s4a-orchestrator-bridge` branch. This narrows but does not replace DEC-002. The rules are:
+1. **Upstream `paperclipai/paperclip` remains the canonical dependency.** No commits, no PRs, no pushes to upstream without separate CEO approval.
+2. **The fork exists only to preserve bridge work off-machine.** It is a safety/auditability measure, not a product strategy.
+3. **Only the `s4a-orchestrator-bridge` branch is pushed to the fork.** The fork's `master` tracks upstream and must not diverge.
+4. **The fork must be removed** when the bridge is either accepted upstream or intentionally abandoned.
+5. **DEC-002 remains in force** for all other purposes: Paperclip is not forked as the product strategy, customization happens through configuration and plugins, and the control plane must remain upgradeable from upstream.
+
+**Rationale:** DEC-002 prohibits forking Paperclip to avoid maintenance burden and divergence risk. The bridge work (DEC-027) requires local Paperclip commits that cannot be pushed upstream yet. A protection fork is the narrowest safe way to preserve this work without violating the spirit of DEC-002 — it is temporary, scoped to one branch, and explicitly scheduled for removal.
+**Authorship:** CEO-directed (Phase 9B closure approval), CTO-executed
