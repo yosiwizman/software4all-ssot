@@ -747,3 +747,23 @@ All lifecycle primitives formalized with helpers and smoke proofs:
 - Orchestrator commit: dca2426 pushed to github.com/yosiwizman/s4a-slice-orchestrator
 - Paperclip commit: 7348b289 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 23: Multi-Slice Concurrency
+
+**Goal:** Prove and formalize that multiple slice workflows run concurrently with full isolation.
+
+**Phase 23 — Multi-slice concurrency (2026-04-10):**
+- **No code changes needed** — Temporal handles each workflow independently, evidence files namespaced by sliceId
+- Concurrency proof (2 concurrent workflows, different states):
+  - Both created simultaneously (SCOPED)
+  - Different builders assigned (opencode vs claude-code)
+  - Different test results (A passes → REVIEWING, B fails → BLOCKED)
+  - State isolation verified: A=REVIEWING, B=BLOCKED, no cross-contamination
+  - History isolation verified: A has 3 transitions, B has 4, no shared data
+  - Evidence isolation verified: separate directories, no cross-references
+  - Mutation isolation: retry on B doesn't affect A's state
+- UI proof: both workflows in Recent Workflows, click to switch, correct status/actions for each
+- Paperclip commit: 8a56be7a (docs only) pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
