@@ -535,3 +535,32 @@ Phased plan from initial setup to a functioning AI software factory. Each phase 
 - Existing lifecycle verified unchanged (10/10 PASS)
 - Paperclip commit: 54a8d176 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
+
+---
+
+## Phase 14: Deploy Formalization
+
+**Goal:** Formalize the deploy step through the Paperclip bridge using the canonical `deploy` command.
+
+**Phase 14 — Deploy formalization (2026-04-09):**
+- No new env gate needed — `deploy` already supported by the generic bridge when `S4A_ORCHESTRATOR_BRIDGE=1`
+- No new route/service code — the existing bridge handles it generically
+- Added: convenience helper `server/scripts/s4a-deploy.sh`
+- Added: dedicated smoke proof for deploy path with evidence check
+- Canonical envelope: `{command:"deploy", payload:{workflowId}, caller:"ceo"}`
+- Canonical caller: `ceo`
+- State transition proven: APPROVED → DEPLOYED (terminal, workflow completes)
+- Evidence: deploy evidence packet persisted (`APPROVED_DEPLOYED.json`)
+- Smoke proofs: deploy (3/3 PASS)
+- Existing lifecycle verified unchanged (10/10 PASS)
+- Paperclip commit: 32369746 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified
+
+**Full Paperclip-bridge pipeline now formalized:**
+All happy-path pipeline stages have dedicated Paperclip-side helpers and smoke proofs:
+1. `createSlice` → SCOPED (Phase 9)
+2. `assignBuilder` → BUILDING (Phase 10 auto-assign)
+3. `reportTests` → REVIEWING or BLOCKED (Phase 11)
+4. `reportReview` → AWAITING_APPROVAL or stays REVIEWING (Phase 12)
+5. `approve` → APPROVED (Phase 13)
+6. `deploy` → DEPLOYED (Phase 14)
