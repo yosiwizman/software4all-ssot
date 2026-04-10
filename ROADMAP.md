@@ -627,4 +627,28 @@ All happy-path pipeline stages have dedicated Paperclip-side helpers and smoke p
 - Existing happy-path lifecycle verified unchanged (10/10 PASS)
 - Paperclip commit: ea94eb10 pushed to fork yosiwizman/paperclip
 - Upstream paperclipai/paperclip NOT modified
-- **Policy note:** Automatic "2 tries then Claude" enforcement deferred — requires orchestrator-side attempt tracking across retries
+- **Policy note:** Phase 17 provided explicit manual escalation. Phase 18 (below) adds the data model for automatic policy enforcement.
+
+---
+
+## Phase 18: Policy-Aware Builder Routing
+
+**Goal:** Add the minimum orchestrator-side state needed for safe automatic enforcement of the "2 tries then Claude" escalation policy (DEC-003).
+
+**Phase 18 — Policy-aware builder routing (2026-04-09):**
+- Orchestrator extended (smallest change):
+  - `buildFailCount`: durable counter, increments on every BUILDING→BLOCKED, does NOT reset on retry
+  - `getStatus` query: returns `{ state, builderAgentId, buildFailCount }` — backward-compatible (getState unchanged)
+  - `getStatus` command added to adapter-core and harness VALID_COMMANDS
+- Policy-aware helper: `server/scripts/s4a-policy-route.sh <workflowId> [caller]`
+  - Reads `buildFailCount` from `getStatus`
+  - `buildFailCount < 2` → retry + assign opencode
+  - `buildFailCount >= 2` → retry + assign claude-code
+- No new env gate — uses existing bridge
+- Proofs:
+  - 1st fail: `buildFailCount=1` → policy chooses opencode (PASS)
+  - 2nd fail: `buildFailCount=2` → policy chooses claude-code (PASS)
+  - Existing happy-path lifecycle unchanged (10/10 PASS)
+- Orchestrator commit: 8164f25 pushed to github.com/yosiwizman/s4a-slice-orchestrator
+- Paperclip commit: 91b12c43 pushed to fork yosiwizman/paperclip
+- Upstream paperclipai/paperclip NOT modified

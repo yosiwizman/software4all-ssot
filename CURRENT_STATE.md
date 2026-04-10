@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-09 (Phase 17 COMPLETE — builder escalation OpenCode→Claude Code formalized through Paperclip bridge)
+Last updated: 2026-04-09 (Phase 18 COMPLETE — policy-aware builder routing with durable buildFailCount tracking)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
