@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-10 (Phase 25 COMPLETE — auto-refresh polling in Slice Inspector)
+Last updated: 2026-04-10 (Phase 25 FULLY CLOSED — auto-refresh polling proven for both workflow status and list)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
