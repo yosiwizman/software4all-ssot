@@ -1,6 +1,6 @@
 # Software 4 All — Current State
 
-Last updated: 2026-04-10 (Phase 26 COMPLETE — upstream audit: no clean upstreamable subset exists, fork-only confirmed)
+Last updated: 2026-04-11 (Slice 33-4 COMPLETE — first reversible local deploy proven on `127.0.0.1:3250`; owner-only env-gate rule codified as DEC-031)
 
 This file tracks the actual state of the machine and ecosystem. Update this file whenever infrastructure changes. Mark every item with a status tag.
 
@@ -193,6 +193,20 @@ See DEC-016 for the formal separation policy.
 | ~/.openclaw/workspace | OpenClaw managed workspace | local | Confirmed |
 
 **Paperclip runtime detail:** No `paperclip` CLI binary is installed globally. The control plane runs via `pnpm dev` from `~/paperclip`, which invokes tsx on `src/index.ts` in the `@paperclipai/server` package. The CLI is available as `pnpm paperclipai` from within the repo. Listens on ports 3100 and 13100 (both localhost-only, same node process).
+
+## Deploy capability (Slice 33, 2026-04-11)
+
+| Item | Status | Notes |
+|------|--------|-------|
+| First-class deploy target | Proven | `yosiwizman/s4a-factory-dashboard` @ `b6498ffdacab73fa6103322a92dd413f5eebc407` on `127.0.0.1:3250` (loopback only). Workflow `slice-workflow-slice-33-4-proof-1775911042` traversed `DRAFT → SCOPED → BUILDING → REVIEWING → VERIFYING → AWAITING_APPROVAL → APPROVED → DEPLOYING → DEPLOYED → ROLLED_BACK` end-to-end. |
+| Deploy runner | `s4a-slice-orchestrator/bin/deploy-runner.sh` → `runLocalDeploy` activity | Dry-run by default. Real-run only when `S4A_DEPLOY_ENABLED=1` is set inline by the CEO for a single invocation (DEC-031). |
+| Undeploy runner | `s4a-slice-orchestrator/bin/undeploy.sh` → `runLocalUndeploy` activity | SIGTERM → wait ≤ 5 s → SIGKILL → loopback-port-unbound check → PID file remove → lockfile release. Transitions workflow to `ROLLED_BACK`. No separate `UNDEPLOYED` state. |
+| Env gate default | **Off** everywhere | `S4A_DEPLOY_ENABLED` is NOT set in any committed file, shell startup, systemd unit, CI config, Claude Code runtime, or long-lived service. Owner-only, transient, per-invocation. DEC-031 is authoritative. |
+| Safety layers | Three independent belts | (1) `applyDeployEnvGate` demotes `pass=true` unless env gate on; (2) `runLocalDeploy` branches on `isDeployEnvGateOn`, stays in dry-run when off; (3) Cedar Policy 7 `deploy_success_required` denies `DEPLOYING → DEPLOYED` without `healthProbePassed && pidAlive`. Removing any one layer still blocks a real deploy. |
+| Port denylist | Enforced | `3000–3002` (Jarvis), `3100` (Paperclip), `11434` (Ollama), `18789` (OpenClaw), `54329` (embedded Postgres). Source of truth: `src/deploy-constants.ts` `PORT_DENYLIST`. |
+| Deploy proof evidence | Committed | `s4a-slice-orchestrator/proof/slice-33-4/` — 10 evidence files + `PROOF.md` walkthrough. Includes deploy artifact, undeploy artifact, independent `curl` health body, `ss` before/during/after, runner logs, final workflow state. |
+| Rollback verification | Required for all future deploy-capable changes | Per `DELIVERY_PIPELINE.md` stage 8: every slice that touches deploy code must re-run a Slice 33-4 style proof with `undeploy` verified, or explicitly document why not with CEO approval. |
+| Production / LAN / internet deploy | **Not authorized** | First deploy class is strictly local-loopback. Any future non-loopback deploy class requires a separate CEO decision. |
 
 ## What is not yet verified
 

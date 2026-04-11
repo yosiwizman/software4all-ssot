@@ -107,16 +107,25 @@ Idea → Intake → Scope/Spec → Build → Review → QA → Approval → Depl
 
 ### 8. Deploy
 
-**Owner:** Paperclip orchestrates, builder agent executes
-**Input:** Approved code
-**Output:** Running deployment
-**Tool:** Docker (for containerized apps), direct deploy (for simple tools)
+**Owner:** Slice orchestrator drives the state machine; `bin/deploy-runner.sh` executes the real spawn; **CEO** explicitly authorizes every run
+**Input:** Approved code, a fully declared `deployTarget` recorded at `createSlice` time
+**Output:** A running local service AND a conformant deploy artifact under `<workspace>/deploy-artifacts/`
+**Tool:** `bin/deploy-runner.sh` (Slice 33-3/33-4) → `runLocalDeploy` activity (`src/activities/deploy.ts`). **Not** Docker. **Not** systemd-enable.
 
-**Rules:**
-- Local deployment first (localhost)
-- Production deploy only with explicit CEO approval
-- Rollback plan must exist before deploying
-- Deployment steps must be reproducible
+**Rules (current first-class deploy class — Slice 33 / DEC-031):**
+
+- **Explicit CEO approval is required for every deploy.** No `preapproved: true` in `EXECUTION_QUEUE.md`, no autopilot, no ralph, no team skill may invoke a deploy with the env gate on without a CEO go-ahead captured in the slice description or session log. Every deploy is a real-world side effect per `CLAUDE.md` stop conditions.
+- **Local-only.** Bind target is `127.0.0.1` only. No `0.0.0.0`, no LAN, no tunnel, no public. Enforced at three layers: pure-string `isLoopbackHealthUrl`, Cedar Policy 6 (`deploy_allowed`), and the runner-side `fetchLoopback` paranoid second check. See `SECURITY_BASELINE.md` → "Exposed port policy" and "Deploy env-gate policy".
+- **Env gate is transient and manual.** `S4A_DEPLOY_ENABLED=1` must be set **only** inline on the single shell command that runs `bin/deploy-runner.sh` or `bin/undeploy.sh`. It must **never** be persisted in any file, shell startup, systemd unit, container layer, CI config, or Claude Code runtime config. DEC-031 is the authoritative rule. Builder and reviewer agents may not set it, export it, or embed it.
+- **Dry-run is the default.** With the env gate off, `runLocalDeploy` evaluates every guard, writes a conformant failure artifact, and never spawns. This is the safe path for all non-proof invocations.
+- **Single-slot lockfile.** `/tmp/s4a-deploy.lock` is acquired atomically (`O_EXCL`) on deploy and released on undeploy/cleanup. Concurrent deploys are refused at the runner layer.
+- **Port denylist (DEC-016 + `spec/DEPLOY_CONTRACT.md` §5):** 3000–3002 (Jarvis), 3100 (Paperclip), 11434 (Ollama), 18789 (OpenClaw), 54329 (embedded Postgres). Any deploy targeting these ports is rejected at Cedar Policy 6 and again at the runner guard layer.
+- **Rollback must be verified after every deploy-capable change.** Every slice that touches deploy code (activity, adapter, runner, policies) must either (a) re-run the Slice 33-4 style proof end-to-end with `undeploy` verified — port unbound, PID file removed, lockfile released, workflow = `ROLLED_BACK` — or (b) explicitly document why that is not possible, with CEO approval to skip. A passing deploy without a verified rollback is not a passing deploy.
+- **No `sudo`, no `systemctl enable`, no `docker`, no `podman`, no package install during deploy.** `startCmd` is checked against `START_CMD_BLOCKLIST` in `src/deploy-constants.ts` at runner time. Any match is a pre-spawn guard failure.
+- **Deploy artifact conformance.** Every attempt — success or failure — produces one JSON artifact conforming to `evidence/deploy-artifact.schema.json`. Artifacts are append-only; each attempt writes a new timestamped file. Independent verification (curl, ss, ps) should be captured alongside.
+- **Slice 33-4 evidence bundle** (`s4a-slice-orchestrator/proof/slice-33-4/`) is the canonical reference for what a complete deploy proof looks like. Future first-deploy-class changes should aim to produce an equivalent bundle.
+
+**Production deploy (deferred):** Public, LAN, internet-facing, or multi-host deployment is **not** part of the first deploy class and is **not** authorized by DEC-031. It remains a separate future decision. Do not generalize the rules above to production without a new CEO decision explicitly re-opening the scope.
 
 ### 9. Maintenance
 
@@ -243,7 +252,9 @@ The s4a-slice-orchestrator enforces this pipeline programmatically using a forma
 | Review | BUILDING → REVIEWING | Cedar: `tests_required` (testsPass+commitExists) | Yes |
 | QA | REVIEWING → VERIFYING | Cedar: `review_required` (reviewApproved=true) | Yes |
 | Approval | VERIFYING → AWAITING_APPROVAL → APPROVED | Cedar: `approval_required` (approvalGranted=true) | Yes |
-| Deploy | APPROVED → DEPLOYED | Deploy signal from CEO | Yes |
+| Deploy | APPROVED → DEPLOYING → DEPLOYED | Cedar: `deploy_allowed` (loopback + port + SHA + lockfile + approval) then Cedar: `deploy_success_required` (healthProbePassed + pidAlive). Deploy signal from CEO + real `reportDeployResult` from `bin/deploy-runner.sh` with `S4A_DEPLOY_ENABLED=1` | Yes |
+| Deploy failure | DEPLOYING → DEPLOY_FAILED → ROLLED_BACK | Cedar DENY on `deploy_success_required` OR runner guard failure. Rollback signal exits to ROLLED_BACK. | Yes |
+| Undeploy | DEPLOYED → ROLLED_BACK | Owner `undeploy` envelope + real `runLocalUndeploy` (SIGTERM → wait → SIGKILL → port-unbound check → PID file remove → lockfile release). No separate UNDEPLOYED state (DEC per Slice 33). | Yes |
 | Maintenance | (post-workflow) | New slice for fixes/features | — |
 
 ### Failure handling → orchestrator states
