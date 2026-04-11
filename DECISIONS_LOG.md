@@ -226,3 +226,30 @@ No manual `CUDA_VISIBLE_DEVICES` pinning is applied — Ollama auto-selects base
 The fork (`yosiwizman/paperclip`, branch `s4a-orchestrator-bridge`) continues under DEC-028 rules. DEC-002 remains in force: Paperclip is not forked as the product strategy.
 **Rationale:** Submitting S4A-specific internal tooling as an upstream PR would likely be rejected and would leak company-specific operator patterns into a public open-source project. Keeping this fork-only is the correct boundary.
 **Authorship:** CTO-executed (Phase 26 audit finding)
+
+### DEC-031: Deploy env-gate is owner-only, transient, and never persisted
+**Date:** 2026-04-11
+**Decision:** The slice orchestrator's `S4A_DEPLOY_ENABLED=1` environment gate — the single switch that lets `runLocalDeploy` actually spawn a child process, bind a port, and take a real-world side effect — is reserved for **explicit owner (CEO) invocation only** and **must never be persisted anywhere**.
+
+Persistence is prohibited in, but not limited to:
+1. Any committed file in any repo (SSOT, orchestrator, Paperclip, Jarvis, AKIOR, downstream projects, dotfiles).
+2. Shell startup files (`.bashrc`, `.bash_profile`, `.profile`, `.zshrc`, `.envrc`, `direnv` configs).
+3. Systemd unit files (user or system), `EnvironmentFile=` directives, or `drop-in` overrides.
+4. Docker/container environment layers, Compose files, or orchestrator ConfigMaps / Secrets.
+5. CI/CD configuration (`.github/workflows/*.yml`, any CI secrets store, any runner environment).
+6. Claude Code runtime config, `CLAUDE.md`, hook scripts, or agent skill definitions.
+7. Temporal worker process environments, `start:worker` npm scripts, or any long-lived service boot path.
+
+**Allowed invocation pattern:** inline on a single shell command, typed by the CEO (or typed into an operator terminal on behalf of the CEO, with the CEO present and aware), for the duration of exactly one deploy or undeploy run. Example:
+```
+S4A_DEPLOY_ENABLED=1 bin/deploy-runner.sh <workflowId>
+```
+The gate is consumed by that process and its subprocesses only; it does not leak to siblings, does not persist across shells, and does not re-appear on the next login.
+
+Builder and reviewer agents (OpenCode, Claude Code, Codex, oh-my-* skills, autopilot, team, ralph, any future agent) **may not** set this env var, export it, source it, write it to any file, embed it in any runtime config, or invoke `bin/deploy-runner.sh` or `bin/undeploy.sh` with it set — except during a slice explicitly authorized by the CEO as a real-world deploy proof.
+
+**Rationale:** Slice 33-4 proved a real reversible deploy on `127.0.0.1:3250` (workflow `slice-workflow-slice-33-4-proof-1775911042`, evidence under `s4a-slice-orchestrator/proof/slice-33-4/`). That proof is the exact scope the capability is authorized for. Anything beyond it — a second target, a second port, a second host, a persistent service — is a separate decision that requires its own CEO approval, its own slice, and its own evidence bundle. Without a strict "owner-only, transient, never persisted" rule around the env gate, an unrelated agent could silently enable real deploys as a side effect of some future refactor or autopilot run, and the carefully built belt-and-suspenders safety layers (applyDeployEnvGate, Cedar Policy 7, dry-run default, runner-level guards) would be undone in a single line of a dotfile.
+
+**Relationship to existing decisions:** This narrows the permissive space inside DEC-016 (port ownership, 3100 is S4A), reinforces the real-world-side-effect rules in `AGENT_ROLE_MATRIX.md`, and sits alongside DEC-022 (slice orchestrator as Phase 6 backbone). It does not change DEC-002 / DEC-028 / DEC-029 (Paperclip fork posture). Future real deploys, even repeats of the Slice 33-4 target, remain owner-gated real-world side effects per CLAUDE.md stop conditions.
+
+**Authorship:** CEO-directed (Slice 33 close-out directive), CTO-executed

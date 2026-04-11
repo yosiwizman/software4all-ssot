@@ -52,6 +52,7 @@ Defines each agent's role, authority, limits, and interaction patterns. This is 
 - Modify this SSOT repo's governance docs
 - Deploy to production without approval gate
 - Access credentials directly
+- Set `S4A_DEPLOY_ENABLED=1` in any Paperclip runtime config, server environment, systemd unit, or persistent startup path (DEC-031). The gate is CEO-typed per-invocation only.
 
 **Inputs:** Project intake, task definitions, pipeline config
 **Outputs:** Task assignments, status updates, completion reports
@@ -73,6 +74,8 @@ Defines each agent's role, authority, limits, and interaction patterns. This is 
 - Deploy to production
 - Make architecture decisions that affect other projects
 - Spend cloud API tokens without budget check
+- **Set, export, source, or persist `S4A_DEPLOY_ENABLED=1`** in any file, shell startup script, systemd unit, container layer, CI config, Claude Code runtime config, or long-lived service environment (DEC-031).
+- **Invoke `bin/deploy-runner.sh` or `bin/undeploy.sh` with the env gate set**, except inside a slice explicitly authorized by the CEO as a real-world deploy proof.
 
 **Inputs:** Task assignment from Paperclip, project specs
 **Outputs:** Code, tests, build artifacts
@@ -111,6 +114,7 @@ Defines each agent's role, authority, limits, and interaction patterns. This is 
 - Same restrictions as OpenCode, plus:
 - Should not be used for tasks OpenCode can handle (cost control)
 - Should not run in autopilot mode without task scope boundaries
+- **Same `S4A_DEPLOY_ENABLED=1` rule (DEC-031):** must not set, export, source, or persist the deploy env gate in any file or runtime config. Must not invoke `bin/deploy-runner.sh` or `bin/undeploy.sh` with the gate on except during a CEO-authorized deploy-proof slice.
 
 **Inputs:** Escalated tasks from Paperclip, complex task assignments
 **Outputs:** Code, tests, build artifacts, architecture recommendations
@@ -148,6 +152,7 @@ Defines each agent's role, authority, limits, and interaction patterns. This is 
 - Override builder agent decisions without escalation
 - Deploy or release
 - Modify project scope
+- Set, export, source, or persist `S4A_DEPLOY_ENABLED=1` anywhere (DEC-031).
 
 **Inputs:** Code from builder agents, review requests
 **Outputs:** Review comments, fix patches, quality reports
@@ -204,8 +209,33 @@ OpenCode (attempt) → fails → Claude Code (escalation)
 ## Approval gates requiring CEO
 
 - Production deployment
+- **Any invocation of `bin/deploy-runner.sh` or `bin/undeploy.sh` with `S4A_DEPLOY_ENABLED=1`** — this is a real-world side effect per CLAUDE.md stop conditions and DEC-031. Every such invocation is an explicit, individually-approved, owner-only action. No builder or reviewer agent may set the env gate in any file or runtime config; it is typed inline by (or for) the CEO and consumed by exactly one process tree.
 - New tool installation (not in INSTALL_BASELINE.md approved list)
 - Architecture decisions affecting multiple projects
 - External service connections with billing
 - Security-sensitive changes
 - Any action with real-world side effects (emails, messages, purchases)
+
+---
+
+## Deploy env-gate rule (DEC-031) — authoritative summary
+
+**Rule:** The slice orchestrator's `S4A_DEPLOY_ENABLED=1` environment variable is the single switch that lets `runLocalDeploy` / `runLocalUndeploy` take a real-world side effect. It must be treated as an owner-only credential.
+
+**Allowed invocation:**
+```
+S4A_DEPLOY_ENABLED=1 bin/deploy-runner.sh <workflowId>
+S4A_DEPLOY_ENABLED=1 bin/undeploy.sh <workflowId> <caller> <workspaceDir> <pidFile> <targetPort>
+```
+— inline on the command line, for exactly one run, typed by the CEO.
+
+**Forbidden for all agents (OpenCode, Claude Code, Codex, oh-my-*, autopilot, team, ralph, ultrapilot, every current and future agent):**
+1. Writing `S4A_DEPLOY_ENABLED=1` or `S4A_DEPLOY_ENABLED=true` to any committed file.
+2. Adding `export S4A_DEPLOY_ENABLED=1` to `.bashrc`, `.bash_profile`, `.profile`, `.zshrc`, `.envrc`, or any shell/direnv startup file.
+3. Adding `Environment=S4A_DEPLOY_ENABLED=1` to any systemd unit, `EnvironmentFile=` path, or drop-in override.
+4. Baking the env var into a Dockerfile, Compose file, ConfigMap, Secret, or CI pipeline (`.github/workflows/*.yml`, any runner configuration).
+5. Adding the env var to `CLAUDE.md`, any hook script, any agent skill definition, or any session bootstrap file.
+6. Adding the env var to `package.json` scripts, npm start wrappers, or the Temporal worker's launch command.
+7. Invoking `bin/deploy-runner.sh` or `bin/undeploy.sh` with the gate on, except inside a slice whose description or governing directive explicitly authorizes a real deploy proof.
+
+**Verification:** `rg --no-ignore 'S4A_DEPLOY_ENABLED=1' -t sh -t systemd -t yaml -t dockerfile` (and equivalent searches of `package.json` `scripts` blocks, shell startup files, and any long-lived-service launch path) across the SSOT repo, the orchestrator repo, the Paperclip repo, and the user's dotfiles **must return zero committed hits**. Mentions in markdown documentation (this file, `SECURITY_BASELINE.md`, `DELIVERY_PIPELINE.md`, `DECISIONS_LOG.md`, `CURRENT_STATE.md`) are expected and allowed — they are prose describing the rule, not runtime configuration. See `SECURITY_BASELINE.md` → "Deploy env-gate policy" for the full enforcement detail.
